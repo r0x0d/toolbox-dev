@@ -19,7 +19,7 @@ dnf -y install \
     mkpasswd \
     ripgrep \
     vim \
-    gh-cli
+    gh
 
 dnf -y install \
     ImageMagick \
