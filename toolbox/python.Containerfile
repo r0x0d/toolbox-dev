@@ -20,3 +20,5 @@ dnf clean all
 
 curl -fsSL https://pyenv.run | bash
 EORUN
+
+ENV PATH "$HOME/.pyenv:$PATH"

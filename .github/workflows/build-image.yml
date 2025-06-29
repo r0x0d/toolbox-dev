@@ -2,6 +2,7 @@ name: Build & Push Image
 
 env:
   REGISTRY: "quay.io/r0x0d"
+  TAGS: latest ${{ github.sha }}
 
 on:
   workflow_call:
@@ -44,7 +45,7 @@ jobs:
         with:
           context: ${{ inputs.context }}
           image: ${{ inputs.image }}
-          tags: latest
+          tags: ${{ env.TAGS }}
           containerfiles: ${{ inputs.containerfile }}
           layers: false
           oci: true
@@ -58,12 +59,10 @@ jobs:
           password: ${{ secrets.BOT_SECRET }}
           image: ${{ inputs.image }}
           registry: ${{ env.REGISTRY }}
-          tags: latest ${{ github.sha }}
+          tags: ${{ env.TAGS }}
           extra-args: |
             --compression-format=zstd:chunked
             --compression-level=19
-
-      - run: echo "Image pushed to ${{ steps.push.outputs.registry-paths }}"
 
       - name: Login to registry
         uses: redhat-actions/podman-login@v1
