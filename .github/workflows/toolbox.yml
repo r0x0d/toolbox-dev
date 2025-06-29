@@ -15,7 +15,9 @@ on:
     - cron:  '0 0 * * MON'
   workflow_dispatch:
 
-permissions: read-all
+permissions: 
+    id-token: write
+    contents: read
 
 jobs:
   build-base:
