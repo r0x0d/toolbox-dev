@@ -1,10 +1,4 @@
 on:
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'toolbox/**'
-      - '.github/workflows/toolbox.yml'
   push:
     branches:
       - main
