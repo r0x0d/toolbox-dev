@@ -18,7 +18,8 @@ dnf -y install \
     make \
     mkpasswd \
     ripgrep \
-    vim 
+    vim \
+    gh-cli
 
 dnf -y install \
     ImageMagick \
@@ -38,6 +39,7 @@ RUN <<EORUN
 set -euxo pipefail
 bins=(
     "btop"
+    "code"
     "firefox"
     "flatpak"
     "htop"

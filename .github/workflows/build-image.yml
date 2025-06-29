@@ -1,0 +1,84 @@
+name: Build & Push Image
+
+env:
+  REGISTRY: "quay.io/r0x0d"
+
+on:
+  workflow_call:
+    inputs:
+      context:
+        required: true
+        type: string
+      image:
+        required: true
+        type: string
+      containerfile:
+        required: true
+        type: string
+    secrets:
+      BOT_USERNAME:
+        required: true
+      BOT_SECRET:
+        required: true
+      COSIGN_PRIVATE_KEY:
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    container:
+      image: quay.io/travier/podman-action
+      options: "--security-opt=label=disable --privileged --user 0:0 --device=/dev/kvm --device=/dev/fuse --volume /:/run/host:rw"
+    steps:
+      - name: Setup Docker config dir
+        run: mkdir -p /github/home/.docker/
+
+      - name: Reclaim disk space
+        run: rm -rf "/run/host/usr/local/lib/android"
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Build image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          context: ${{ inputs.context }}
+          image: ${{ inputs.image }}
+          tags: latest
+          containerfiles: ${{ inputs.containerfile }}
+          layers: false
+          oci: true
+
+      - name: Push image
+        uses: redhat-actions/push-to-registry@v2
+        id: push
+        if: ${{ github.event_name == 'push' || github.event_name == 'schedule' }}
+        with:
+          username: ${{ secrets.BOT_USERNAME }}
+          password: ${{ secrets.BOT_SECRET }}
+          image: ${{ inputs.image }}
+          registry: ${{ env.REGISTRY }}
+          tags: latest
+          extra-args: |
+            --compression-format=zstd:chunked
+            --compression-level=19
+
+      - name: Login to registry
+        uses: redhat-actions/podman-login@v1
+        if: ${{ github.event_name == 'push' || github.event_name == 'schedule' }}
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.BOT_USERNAME }}
+          password: ${{ secrets.BOT_SECRET }}
+          auth_file_path: /tmp/auth.json
+
+      - uses: sigstore/cosign-installer@v3.9.0
+        if: ${{ github.event_name == 'push' || github.event_name == 'schedule' }}
+
+      - name: Sign image
+        if: ${{ github.event_name == 'push' || github.event_name == 'schedule' }}
+        run: |
+          cosign sign -y --key env://COSIGN_PRIVATE_KEY quay.io/r0x0d/${{ inputs.image }}@${{ steps.push.outputs.digest }}
+        env:
+          COSIGN_EXPERIMENTAL: false
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
