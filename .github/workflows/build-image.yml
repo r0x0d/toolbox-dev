@@ -58,10 +58,12 @@ jobs:
           password: ${{ secrets.BOT_SECRET }}
           image: ${{ inputs.image }}
           registry: ${{ env.REGISTRY }}
-          tags: latest
+          tags: latest ${{ github.sha }}
           extra-args: |
             --compression-format=zstd:chunked
             --compression-level=19
+
+      - run: echo "Image pushed to ${{ steps.push.outputs.registry-paths }}"
 
       - name: Login to registry
         uses: redhat-actions/podman-login@v1
