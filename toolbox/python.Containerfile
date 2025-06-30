@@ -1,24 +1,38 @@
 FROM quay.io/r0x0d/toolbox-base:latest
 
-# - Install common development tools for python
-RUN <<EORUN
+COPY hack/setup.sh /tmp/setup.sh
 
-dnf -y install \
-    ShellCheck \
-    ruff \
-    g++ \
-    gcc \
-    pylint \
-    pyright \
-    python3-pip \
+ENV PYENV_PKGS patch \
+    zlib-devel \
+    bzip2 \
+    bzip2-devel \
+    readline-devel \
+    sqlite \
+    sqlite-devel \
+    tk-devel \
+    libffi-devel \
+    xz-devel \
+    libuuid-devel \
+    gdbm-libs \
+    libnsl2 
+
+ENV PKGS ShellCheck \
     python3-devel \
-    pre-commit \
+    python3-pip \
     shfmt \
-    yamllint 
-    
-dnf clean all
+    yamllint \
+    # dependencies for pyenv
+    ${PYENV_PKGS}
 
+ENV PYENV_ROOT "/opt/pyenv"
+
+ENV PATH "${PYENV_ROOT}/bin:$PATH"
+
+RUN /tmp/setup.sh
+
+RUN <<EORUN
 curl -fsSL https://pyenv.run | bash
-EORUN
 
-ENV PATH "$HOME/.pyenv:$PATH"
+# Install packages using pip
+pip install --no-cache-dir ruff pyright pre-commit
+EORUN

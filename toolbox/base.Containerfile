@@ -1,15 +1,7 @@
 FROM registry.fedoraproject.org/fedora-toolbox:42
 
-# - Install common development tools
-# - Install gh (GitHub) cli
-# - Remove mlocate
-RUN <<EORUN
-set -euxo pipefail
-sed -i "s/enabled=1/enabled=0/" "/etc/yum.repos.d/fedora-cisco-openh264.repo"
-dnf -y update
-
-dnf install \
-    asciinema \
+COPY hack/setup.sh /tmp/setup.sh
+ENV PKGS asciinema \
     fd-find \
     fzf \
     git-credential-libsecret \
@@ -19,38 +11,19 @@ dnf install \
     mkpasswd \
     ripgrep \
     vim \
+    openssl-devel \
+    g++ \
+    gcc \
     gh \
-    -y --nodocs --setopt=keepcache=0 --setopt=tsflags=nodocs
-
-dnf install \
     ImageMagick \
     graphviz \
-    pandoc \
-    --exclude=adobe-source-code-pro-fonts,logrotate,low-memory-monitor,nodejs-docs,nodejs-full-i18n,pipewire,tracker,tracker-miners,upower,xdg-desktop-portal-gtk \
-    -y --nodocs --setopt=keepcache=0 --setopt=tsflags=nodocs
+    pandoc 
 
-dnf -y install openssl-devel \
-    -y --nodocs --setopt=keepcache=0 --setopt=tsflags=nodocs
-    
-dnf clean all
-EORUN
-
-# Setup host-runner script and symlinks
-COPY hack/host-runner /usr/local/bin/host-runner
+# - Install common development tools
 RUN <<EORUN
-set -euxo pipefail
-bins=(
-    "btop"
-    "code"
-    "firefox"
-    "flatpak"
-    "htop"
-    "podman"
-    "rpm-ostree"
-    "systemctl"
-    "xdg-open"
-);
-for f in "${bins[@]}"; do
-    ln -s host-runner /usr/local/bin/$f;
-done
+sed -i "s/enabled=1/enabled=0/" "/etc/yum.repos.d/fedora-cisco-openh264.repo"
+echo "fastestmirror=true" >> /etc/dnf/dnf.conf
+echo "max_downloads=20" >> /etc/dnf/dnf.conf
 EORUN
+
+RUN /tmp/setup.sh
