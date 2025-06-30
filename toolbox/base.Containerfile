@@ -8,7 +8,7 @@ set -euxo pipefail
 sed -i "s/enabled=1/enabled=0/" "/etc/yum.repos.d/fedora-cisco-openh264.repo"
 dnf -y update
 
-dnf -y install \
+dnf install \
     asciinema \
     fd-find \
     fzf \
@@ -19,16 +19,18 @@ dnf -y install \
     mkpasswd \
     ripgrep \
     vim \
-    gh
+    gh \
+    -y --nodocs --setopt=keepcache=0 --setopt=tsflags=nodocs
 
-dnf -y install \
+dnf install \
     ImageMagick \
     graphviz \
     pandoc \
-    --exclude=adobe-source-code-pro-fonts,logrotate,low-memory-monitor,nodejs-docs,nodejs-full-i18n,pipewire,tracker,tracker-miners,upower,xdg-desktop-portal-gtk
+    --exclude=adobe-source-code-pro-fonts,logrotate,low-memory-monitor,nodejs-docs,nodejs-full-i18n,pipewire,tracker,tracker-miners,upower,xdg-desktop-portal-gtk \
+    -y --nodocs --setopt=keepcache=0 --setopt=tsflags=nodocs
 
-dnf -y install \
-    openssl-devel 
+dnf -y install openssl-devel \
+    -y --nodocs --setopt=keepcache=0 --setopt=tsflags=nodocs
     
 dnf clean all
 EORUN
