@@ -31,6 +31,9 @@ jobs:
           - name: python
             containerfile: toolbox/python.Containerfile
             image: toolbox-python
+          - name: node
+            containerfile: toolbox/node.Containerfile
+            image: toolbox-node
     uses: ./.github/workflows/build-image.yml
     with:
       context: .

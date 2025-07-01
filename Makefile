@@ -15,6 +15,10 @@ base: ## Build the base image
 python: ## Build the python image
 	$(call build_image, python)
 
+.PHONY: node
+node: ## Build the node image
+	$(call build_image, node)
+
 
 .PHONY: help
 help: ## Show available make commands
