@@ -12,6 +12,7 @@ Currently, the boxes available in this repository are:
 |---|---|---|---|
 |Fedora 42|toolbox-base|General toolbox for regular use|[toolbox-base](https://quay.io/repository/r0x0d/toolbox-base)|
 |[toolbox-base](https://quay.io/repository/r0x0d/toolbox-base)|toolbox-python|General toolbox for python development|[toolbox-python](https://quay.io/repository/r0x0d/toolbox-python)|
+|[toolbox-base](https://quay.io/repository/r0x0d/toolbox-base)|toolbox-node|General toolbox for node development|[toolbox-python](https://quay.io/repository/r0x0d/toolbox-node)|
 
 ## Building locally
 

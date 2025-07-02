@@ -9,5 +9,5 @@ ENV PKGS ShellCheck \
 RUN /tmp/setup.sh
 
 RUN <<EORUN
-npm install --global yarn
+npm install --global yarn pnpm
 EORUN
