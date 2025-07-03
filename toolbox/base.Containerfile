@@ -17,7 +17,9 @@ ENV PKGS asciinema \
     gh \
     ImageMagick \
     graphviz \
-    pandoc 
+    pandoc \
+    ShellCheck \
+    shfmt
 
 # - Install common development tools
 RUN <<EORUN

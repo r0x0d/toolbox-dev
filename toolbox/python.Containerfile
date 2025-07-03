@@ -16,10 +16,8 @@ ENV PYENV_PKGS patch \
     gdbm-libs \
     libnsl2 
 
-ENV PKGS ShellCheck \
-    python3-devel \
+ENV PKGS python3-devel \
     python3-pip \
-    shfmt \
     yamllint \
     # dependencies for pyenv
     ${PYENV_PKGS}

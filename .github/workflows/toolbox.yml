@@ -29,14 +29,11 @@ jobs:
       matrix:
         include:
           - name: python
-            containerfile: toolbox/python.Containerfile
-            image: toolbox-python
           - name: node
-            containerfile: toolbox/node.Containerfile
-            image: toolbox-node
+          - name: ruby
     uses: ./.github/workflows/build-image.yml
     with:
       context: .
-      image: ${{ matrix.image }}
-      containerfile: ${{ matrix.containerfile }}
+      image: toobolx-${{ matrix.name }}
+      containerfile: toolbox/${{ matrix.name }}.Containerfile
     secrets: inherit

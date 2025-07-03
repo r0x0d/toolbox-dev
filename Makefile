@@ -1,31 +1,27 @@
+IMAGES := base python node ruby
+
 default: help
 
-define build_image
-    $(eval $@_TYPE = $(1))
-	podman build --pull --rm -f "toolbox/${$@_TYPE}.Containerfile" -t "local/toolbox-${$@_TYPE}" "."
+
+# Toolbox create rule
+define TOOLBOX_CREATE_TEMPLATE
+toolbox-create-$(1):
+	toolbox create --image localhost/local/toolbox-$(1) $(1)-dev
 endef
 
+# Toolbox enter rule
+define TOOLBOX_ENTER_TEMPLATE
+toolbox-enter-$(1):
+	toolbox enter $(1)-dev
+endef
 
-.PHONY: base
-base: ## Build the base image
-	@$(call build_image, base)
+# Define all toolbox-related phony targets
+.PHONY: $(addprefix toolbox-create-,$(IMAGES)) $(addprefix toolbox-enter-,$(IMAGES))
 
+# Generate rules using eval
+$(foreach image,$(IMAGES),$(eval $(call TOOLBOX_CREATE_TEMPLATE,$(image))))
+$(foreach image,$(IMAGES),$(eval $(call TOOLBOX_ENTER_TEMPLATE,$(image))))
 
-.PHONY: python
-python: ## Build the python image
-	$(call build_image, python)
-
-.PHONY: node
-node: ## Build the node image
-	$(call build_image, node)
-
-
-.PHONY: help
-help: ## Show available make commands
-	@echo 'Usage: make <OPTIONS> ... <TARGETS>'
-	@echo ''
-	@echo 'Available targets are:'
-	@echo ''
-	@grep -E '^[ a-zA-Z0-9_.-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
-		awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-25s\033[0m %s\n", $$1, $$2}'
-	@echo ''
+.PHONY: $(IMAGES)
+$(IMAGES): ## Build a image
+	podman build --pull --rm -f "toolbox/$@.Containerfile" -t "local/toolbox-$@" "."

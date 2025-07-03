@@ -3,8 +3,7 @@ FROM quay.io/r0x0d/toolbox-base:latest
 COPY hack/setup.sh /tmp/setup.sh
 
 ENV PKGS ShellCheck \
-    nodejs \
-    shfmt
+    nodejs 
 
 RUN /tmp/setup.sh
 

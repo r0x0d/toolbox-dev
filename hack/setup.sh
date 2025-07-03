@@ -5,5 +5,3 @@ DNF_BASE_OPTS="-y --nodocs --setopt=keepcache=0 --setopt=tsflags=nodocs"
 PKGS="${PKGS:-()}"
 
 dnf -y update && dnf install $DNF_BASE_OPTS $PKGS && dnf clean all
-
-rm -rf /var/cache/dnf /var/tmp/* /tmp/*
