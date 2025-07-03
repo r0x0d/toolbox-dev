@@ -15,6 +15,7 @@ permissions:
 
 jobs:
   build-base:
+    name: Build Dev Toolbox (base)
     uses: ./.github/workflows/build-image.yml
     with:
       context: .
@@ -34,6 +35,6 @@ jobs:
     uses: ./.github/workflows/build-image.yml
     with:
       context: .
-      image: toobolx-${{ matrix.name }}
+      image: toolbox-${{ matrix.name }}
       containerfile: toolbox/${{ matrix.name }}.Containerfile
     secrets: inherit
