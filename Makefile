@@ -5,13 +5,13 @@ default: help
 
 # Toolbox create rule
 define TOOLBOX_CREATE_TEMPLATE
-toolbox-create-$(1):
+toolbox-create-$(1): $(1)
 	toolbox create --image localhost/local/toolbox-$(1) $(1)-dev
 endef
 
 # Toolbox enter rule
 define TOOLBOX_ENTER_TEMPLATE
-toolbox-enter-$(1):
+toolbox-enter-$(1): toolbox-create-$(1)
 	toolbox enter $(1)-dev
 endef
 

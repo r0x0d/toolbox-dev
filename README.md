@@ -17,7 +17,8 @@ Currently, the boxes available in this repository are:
 
 ## Building locally
 
-To build the images locally, one must need to install [podman](https://podman.io/), once podman is installed, just run the following: 
+To build the images locally, one must need to install
+[podman](https://podman.io/), once podman is installed, just run the following: 
 
 ```bash
 # To generate the base image
@@ -27,5 +28,29 @@ make base
 make python
 ```
 
+All image building options follow the
+[IMAGES](https://github.com/r0x0d/toolbox-dev/blob/main/Makefile#L1) variable
+in our Makefile.
+
 ## Making use of the toolbox images
 
+In order to use any of the boxes provided by this repository, you can just do: 
+
+```bash
+# For creating a python box
+toolbox create --image quay.io/r0x0d/toolbox-python python-dev
+```
+
+And the same applies for all images shipped in this repository. That will pick
+whatever is in quay and pull the latest data. 
+
+If, whoever, you want to just use the locally build image, we have two
+pre-defined commands in the Makefile to assist with that.
+
+```bash
+# To create a python toolbox
+make toolbox-create-python
+
+# To enter the newly created python box
+make toolbox-enter-python
+```
