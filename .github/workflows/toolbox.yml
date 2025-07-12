@@ -1,40 +1,47 @@
+name: Detect Changed Images
+
 on:
   push:
     branches:
       - main
     paths:
       - 'toolbox/**'
-      - '.github/workflows/toolbox.yml'
   schedule:
     - cron:  '0 0 * * MON'
   workflow_dispatch:
 
-permissions: 
-    id-token: write
-    contents: read
-
 jobs:
-  build-base:
-    name: Build Dev Toolbox (base)
-    uses: ./.github/workflows/build-image.yml
-    with:
-      context: .
-      image: toolbox-base
-      containerfile: toolbox/base.Containerfile
-    secrets: inherit
+  detect:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
 
-  build-dev:
-    name: Build Dev Toolbox (${{ matrix.name }})
-    needs: build-base
-    strategy:
-      matrix:
-        include:
-          - name: python
-          - name: node
-          - name: ruby
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Find changed Containerfiles
+        id: set-matrix
+        run: |
+          git fetch origin main
+          CHANGED=$(git diff --name-only origin/main HEAD)
+          echo "Changed files: $CHANGED"
+
+          MAP=""
+          for FILE in $CHANGED; do
+            if [[ "$FILE" == */Containerfile ]]; then
+              CONTAINER_FILE=$(basename "$DIR")
+              IMAGE=${CONTAINER_FILE%.*}
+              MAP="$MAP{\"container_file\":\"$CONTAINER_FILE\", \"image\":\"$IMAGE\"},"
+            fi
+          done
+          MATRIX="{\"include\": [${MAP%,}]}"
+          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+
+  trigger-build:
+    needs: detect
+    if: needs.detect.outputs.matrix != '{}'
     uses: ./.github/workflows/build-image.yml
     with:
-      context: .
-      image: toolbox-${{ matrix.name }}
-      containerfile: toolbox/${{ matrix.name }}.Containerfile
+      matrix: ${{ needs.detect.outputs.matrix }}
     secrets: inherit

@@ -7,13 +7,7 @@ env:
 on:
   workflow_call:
     inputs:
-      context:
-        required: true
-        type: string
-      image:
-        required: true
-        type: string
-      containerfile:
+      matrix:
         required: true
         type: string
     secrets:
@@ -38,13 +32,17 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
 
+      - name: Install dependencies
+        run: |
+          sudo apt-get update && sudo apt install -y jq
+
       - name: Build image
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2
         with:
-          context: ${{ inputs.context }}
-          image: ${{ inputs.image }}
+          context: .
+          image: toolbox-${{ matrix.image }}
           tags: ${{ env.TAGS }}
-          containerfiles: ${{ inputs.containerfile }}
+          containerfiles: toolbox/${{ matrix.container_file }}
           layers: false
           oci: true
 
@@ -55,7 +53,7 @@ jobs:
         with:
           username: ${{ secrets.BOT_USERNAME }}
           password: ${{ secrets.BOT_SECRET }}
-          image: ${{ inputs.image }}
+          image: ${{ matrix.image }}
           registry: ${{ env.REGISTRY }}
           tags: ${{ env.TAGS }}
           extra-args: |
@@ -76,7 +74,7 @@ jobs:
 
       - name: Sign image (keyless)
         if: ${{ github.event_name == 'push' || github.event_name == 'schedule' }}
-        run: |
-          cosign sign -y quay.io/r0x0d/${{ inputs.image }}@${{ steps.push.outputs.digest }}
         env:
           COSIGN_EXPERIMENTAL: "1"
+        run: |
+          cosign sign -y quay.io/r0x0d/${{ matrix.image }}@${{ steps.push.outputs.digest }}

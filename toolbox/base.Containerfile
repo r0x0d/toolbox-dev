@@ -17,11 +17,9 @@ ENV PKGS asciinema \
     gh \
     ImageMagick \
     graphviz \
-    pandoc \
-    ShellCheck \
-    shfmt
+    pandoc
 
-# - Install common development tools
+    
 RUN <<EORUN
 sed -i "s/enabled=1/enabled=0/" "/etc/yum.repos.d/fedora-cisco-openh264.repo"
 echo "fastestmirror=true" >> /etc/dnf/dnf.conf
