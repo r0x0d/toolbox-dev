@@ -19,6 +19,7 @@ ENV PKGS asciinema \
     graphviz \
     pandoc \
     ShellCheck \
+    neovim \
     shfmt
 
 # - Install common development tools
