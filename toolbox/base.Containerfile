@@ -20,6 +20,7 @@ ENV PKGS asciinema \
     pandoc \
     ShellCheck \
     neovim \
+    vim-X11 \
     shfmt
 
 # - Install common development tools
