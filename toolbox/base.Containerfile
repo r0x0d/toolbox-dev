@@ -19,7 +19,6 @@ ENV PKGS asciinema \
     graphviz \
     pandoc \
     ShellCheck \
-    neovim \
     vim-X11 \
     shfmt
 

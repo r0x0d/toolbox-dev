@@ -22,15 +22,15 @@ ENV PKGS python3-devel \
     # dependencies for pyenv
     ${PYENV_PKGS}
 
-ENV PYENV_ROOT "/opt/pyenv"
-
-ENV PATH "${PYENV_ROOT}/bin:$PATH"
-
 RUN /tmp/setup.sh
 
 RUN <<EORUN
-curl -fsSL https://pyenv.run | bash
-
 # Install packages using pip
 pip install --no-cache-dir ruff pyright pre-commit
+
+# Install UV
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Install poetry
+curl -sSL https://install.python-poetry.org | python3 -
 EORUN
