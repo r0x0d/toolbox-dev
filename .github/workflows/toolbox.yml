@@ -32,6 +32,7 @@ jobs:
           - name: python
           - name: node
           - name: ruby
+          - name: rust
     uses: ./.github/workflows/build-image.yml
     with:
       context: .

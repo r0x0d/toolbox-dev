@@ -14,6 +14,7 @@ Currently, the boxes available in this repository are:
 |[toolbox-base](https://quay.io/repository/r0x0d/toolbox-base)|toolbox-python|General toolbox for python development|[toolbox-python](https://quay.io/repository/r0x0d/toolbox-python)|
 |[toolbox-base](https://quay.io/repository/r0x0d/toolbox-base)|toolbox-node|General toolbox for node development|[toolbox-node](https://quay.io/repository/r0x0d/toolbox-node)|
 |[toolbox-base](https://quay.io/repository/r0x0d/toolbox-base)|toolbox-ruby|General toolbox for ruby development|[toolbox-ruby](https://quay.io/repository/r0x0d/toolbox-ruby)|
+|[toolbox-base](https://quay.io/repository/r0x0d/toolbox-base)|toolbox-rust|General toolbox for rust development|[toolbox-rust](https://quay.io/repository/r0x0d/toolbox-rust)|
 
 ## Building locally
 

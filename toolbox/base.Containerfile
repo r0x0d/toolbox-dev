@@ -31,3 +31,4 @@ echo "max_parallel_downloads=20" >> /etc/dnf/dnf.conf
 EORUN
 
 RUN /tmp/setup.sh
+
