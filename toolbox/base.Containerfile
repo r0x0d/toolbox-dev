@@ -13,16 +13,8 @@ ENV PKGS asciinema \
     vim \
     openssl-devel \
     g++ \
-    gcc \
-    gh \
-    ImageMagick \
-    graphviz \
-    pandoc \
-    ShellCheck \
-    vim-X11 \
-    neovim \
-    shfmt
-
+    gcc
+    
 # - Install common development tools
 RUN <<EORUN
 sed -i "s/enabled=1/enabled=0/" "/etc/yum.repos.d/fedora-cisco-openh264.repo"
