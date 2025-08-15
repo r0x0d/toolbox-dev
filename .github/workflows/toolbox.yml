@@ -33,6 +33,7 @@ jobs:
           - name: node
           - name: ruby
           - name: rust
+          - name: dotnet
     uses: ./.github/workflows/build-image.yml
     with:
       context: .

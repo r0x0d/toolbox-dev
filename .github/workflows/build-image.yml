@@ -32,9 +32,6 @@ jobs:
       - name: Setup Docker config dir
         run: mkdir -p /github/home/.docker/
 
-      - name: Reclaim disk space
-        run: rm -rf "/run/host/usr/local/lib/android"
-
       - name: Checkout repo
         uses: actions/checkout@v4
 
