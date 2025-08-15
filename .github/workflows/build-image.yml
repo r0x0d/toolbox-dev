@@ -26,17 +26,17 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     container:
-      image: quay.io/travier/podman-action
+      image: quay.io/travier/podman-action@sha256:d89505fb7b889b0da0a4bc38920c3e2b15699e52cc41b78854a4e30986788208
       options: "--security-opt=label=disable --privileged --user 0:0 --device=/dev/kvm --device=/dev/fuse --volume /:/run/host:rw"
     steps:
       - name: Setup Docker config dir
         run: mkdir -p /github/home/.docker/
 
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
 
       - name: Build image
-        uses: redhat-actions/buildah-build@v2
+        uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2
         with:
           context: ${{ inputs.context }}
           image: ${{ inputs.image }}
@@ -46,7 +46,7 @@ jobs:
           oci: true
 
       - name: Push image
-        uses: redhat-actions/push-to-registry@v2
+        uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # v2
         id: push
         if: ${{ github.event_name == 'push' || github.event_name == 'schedule' }}
         with:
@@ -60,7 +60,7 @@ jobs:
             --compression-level=19
 
       - name: Login to registry
-        uses: redhat-actions/podman-login@v1
+        uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1
         if: ${{ github.event_name == 'push' || github.event_name == 'schedule' }}
         with:
           registry: ${{ env.REGISTRY }}
@@ -68,7 +68,7 @@ jobs:
           password: ${{ secrets.BOT_SECRET }}
           auth_file_path: /tmp/auth.json
 
-      - uses: sigstore/cosign-installer@v3.9.2
+      - uses: sigstore/cosign-installer@d58896d6a1865668819e1d91763c7751a165e159 # v3.9.2
         if: ${{ github.event_name == 'push' || github.event_name == 'schedule' }}
 
       - name: Sign image (keyless)
