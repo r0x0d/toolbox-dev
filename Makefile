@@ -1,4 +1,4 @@
-IMAGES := base python node ruby
+IMAGES := base python node ruby dotnet
 
 default: help
 
