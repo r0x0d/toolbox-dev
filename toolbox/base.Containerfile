@@ -1,4 +1,4 @@
-FROM registry.fedoraproject.org/fedora-toolbox:42@sha256:9b0ecab5e129da148b1495d0ab20c4a5677b41c4ac4de25ee65c1fe6f6637b16
+FROM registry.fedoraproject.org/fedora-toolbox:42@sha256:9404a36d05f94511d37377a0e112a43aea3944ef36eb42de61127da222a77fce
 
 COPY hack/setup.sh /tmp/setup.sh
 ENV PKGS asciinema \
