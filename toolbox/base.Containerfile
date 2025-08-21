@@ -8,6 +8,7 @@ ENV PKGS asciinema \
     inotify-tools \
     jq \
     make \
+    bat \
     mkpasswd \
     ripgrep \
     vim \
