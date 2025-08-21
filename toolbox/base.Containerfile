@@ -12,6 +12,7 @@ ENV PKGS asciinema \
     ripgrep \
     vim \
     openssl-devel \
+    neovim \
     g++ \
     gcc
     
