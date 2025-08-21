@@ -6,16 +6,42 @@ on:
       - 'toolbox/**'
       - '.github/workflows/toolbox.yml'
   schedule:
-    - cron:  '0 0 * * MON'
+    - cron: '0 0 * * MON'
   workflow_dispatch:
 
-permissions: 
-    id-token: write
-    contents: read
+    permissions: 
+  id-token: write
+  contents: read
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      base: ${{ steps.filter.outputs.base }}
+      containers: ${{ steps.filter.outputs.containers }}
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            base:
+              - 'toolbox/base.Containerfile'
+            containers:
+              - 'toolbox/*.Containerfile'
+          list-files: json
+
+      - name: Generate matrix
+        id: matrix
+        run: |
+          matrix=$(find toolbox/ -name "*.Containerfile" ! -name "base.Containerfile" -exec basename {} .Containerfile \; | jq -R -s -c 'split("\n")[:-1]')
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+        echo "Generated matrix: $matrix"
+
   build-base:
-    name: Build Dev Toolbox (base)
+    needs: changes
+    if: github.event_name != 'push' || needs.changes.outputs.base == 'true'
     uses: ./.github/workflows/build-image.yml
     with:
       context: .
@@ -24,16 +50,11 @@ jobs:
     secrets: inherit
 
   build-dev:
-    name: Build Dev Toolbox (${{ matrix.name }})
-    needs: build-base
+    needs: [changes, build-base]
+    if: always() && (github.event_name != 'push' || needs.changes.outputs.containers == 'true') && (needs.build-base.result == 'success' || needs.build-base.result == 'skipped')
     strategy:
       matrix:
-        include:
-          - name: python
-          - name: node
-          - name: ruby
-          - name: rust
-          - name: dotnet
+        name: ${{ fromJSON(needs.changes.outputs.matrix) }}
     uses: ./.github/workflows/build-image.yml
     with:
       context: .
