@@ -9,7 +9,7 @@ on:
     - cron: '0 0 * * MON'
   workflow_dispatch:
 
-    permissions: 
+permissions:
   id-token: write
   contents: read
 
@@ -31,13 +31,13 @@ jobs:
             containers:
               - 'toolbox/*.Containerfile'
           list-files: json
-
+      
       - name: Generate matrix
         id: matrix
         run: |
           matrix=$(find toolbox/ -name "*.Containerfile" ! -name "base.Containerfile" -exec basename {} .Containerfile \; | jq -R -s -c 'split("\n")[:-1]')
           echo "matrix=$matrix" >> $GITHUB_OUTPUT
-        echo "Generated matrix: $matrix"
+          echo "Generated matrix: $matrix"
 
   build-base:
     needs: changes
