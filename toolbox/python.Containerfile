@@ -1,4 +1,4 @@
-FROM quay.io/r0x0d/toolbox-base:latest@sha256:cf7b394dfa24f8e0c88669ba3f16b6605eaf89c5cd6f2218b4c0ee7269eee036
+FROM quay.io/r0x0d/toolbox-base:latest@sha256:2f8581a39af132e4d61186839d53fb7a648e71b4ab91ba3d7f9a5edd7fbec713
 
 COPY hack/setup.sh /tmp/setup.sh
 
