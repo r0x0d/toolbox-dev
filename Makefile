@@ -1,4 +1,4 @@
-IMAGES := base python node ruby dotnet
+IMAGES := $(basename $(notdir $(wildcard toolbox/*.Containerfile)))
 
 default: help
 
