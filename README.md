@@ -17,6 +17,16 @@ Currently, the boxes available in this repository are:
 |[toolbox-base](https://quay.io/repository/r0x0d/toolbox-base)|toolbox-rust|General toolbox for rust development|[toolbox-rust](https://quay.io/repository/r0x0d/toolbox-rust)|
 |[toolbox-base](https://quay.io/repository/r0x0d/toolbox-base)|toolbox-dotnet|General toolbox for dotnet development|[toolbox-dotnet](https://quay.io/repository/r0x0d/toolbox-dotnet)|
 
+## Adding new toolboxes
+
+Currently, all toolboxes per environment are located under the `toolbox`
+folder. If you wish to do a new toolbox environment, just simply add your
+`<environment>.Containerfile` inside that folder, and you're ready to go.
+
+As default, all images use as base the `base.Containerfile`, or
+`quay.io/r0x0d/toolbox-base:latest` to keep them up-to-date when a new pipeline
+build is triggered.
+
 ## Building locally
 
 To build the images locally, one must need to install
@@ -56,3 +66,12 @@ make toolbox-create-python
 # To enter the newly created python box
 make toolbox-enter-python
 ```
+
+## Future plans
+
+A non-exhaustive list of updates that are needed for this project as we move
+into the future.
+
+- [ ] Split the toolboxes into folders to better organize the builds
+    - [ ] `environment` folder for the environmental images ({python,dotnet,node}.Containerfile and etc...)
+    - [ ] `app` folder for the application images ({emacs,vscode}.Containerfiler and etc...)
