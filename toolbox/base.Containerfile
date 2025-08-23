@@ -14,6 +14,7 @@ ENV PKGS asciinema \
     inotify-tools \
     jq \
     make \
+    pre-commit \
     bat \
     mkpasswd \
     ripgrep \
