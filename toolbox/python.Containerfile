@@ -14,7 +14,7 @@ ENV PYENV_PKGS patch \
     xz-devel \
     libuuid-devel \
     gdbm-libs \
-    libnsl2 
+    libnsl2
 
 ENV PKGS python3-devel \
     python3-pip \
@@ -26,7 +26,7 @@ RUN /tmp/setup.sh
 
 RUN <<EORUN
 # Install packages using pip
-pip install --no-cache-dir ruff pyright pre-commit
+pip install --no-cache-dir ruff pyright
 
 # Install UV
 curl -LsSf https://astral.sh/uv/install.sh | sh

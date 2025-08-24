@@ -22,6 +22,7 @@ ENV PKGS asciinema \
     openssl-devel \
     neovim \
     g++ \
+    pre-commit \
     gcc \
     btop
 
@@ -32,6 +33,7 @@ echo "fastestmirror=true" >> /etc/dnf/dnf.conf
 echo "max_parallel_downloads=20" >> /etc/dnf/dnf.conf
 EORUN
 
+# Symlink host-runner to each package defined in $BINS environment variable
 RUN <<EORUN
 set -euxo pipefail
 bins=($BINS)
@@ -41,4 +43,3 @@ done
 EORUN
 
 RUN /tmp/setup.sh
-
