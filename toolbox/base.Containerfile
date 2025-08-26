@@ -1,4 +1,4 @@
-FROM registry.fedoraproject.org/fedora-toolbox:42@sha256:8c3221eef15f766b625049bd2e64cf39e96780e6bdb37e4a77ff660136c86d1e
+FROM registry.fedoraproject.org/fedora-toolbox:42@sha256:51dc0d89b548d8e7334c9df0213d03d60266c75085ad5d1366b785381e39f536
 
 ARG CHOWN_ID=1000:1000
 
