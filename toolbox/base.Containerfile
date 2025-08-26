@@ -9,6 +9,7 @@ ENV BINS rpm-ostree flatpak systemctl podman xdg-open
 
 ENV PKGS asciinema \
     fd-find \
+    shfmt \
     fzf \
     git-credential-libsecret \
     inotify-tools \
