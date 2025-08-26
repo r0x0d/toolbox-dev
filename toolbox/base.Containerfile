@@ -22,6 +22,8 @@ ENV PKGS asciinema \
     vim \
     openssl-devel \
     neovim \
+    luarocks \
+    lua lua5.1 \
     g++ \
     pre-commit \
     gcc \
