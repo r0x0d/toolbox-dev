@@ -48,7 +48,6 @@ jobs:
       - name: Push image
         uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # v2
         id: push
-        if: ${{ github.event_name == 'push' || github.event_name == 'schedule' }}
         with:
           username: ${{ secrets.BOT_USERNAME }}
           password: ${{ secrets.BOT_SECRET }}
@@ -61,7 +60,6 @@ jobs:
 
       - name: Login to registry
         uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1
-        if: ${{ github.event_name == 'push' || github.event_name == 'schedule' }}
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ secrets.BOT_USERNAME }}
@@ -69,11 +67,11 @@ jobs:
           auth_file_path: /tmp/auth.json
 
       - uses: sigstore/cosign-installer@d58896d6a1865668819e1d91763c7751a165e159 # v3.9.2
-        if: ${{ github.event_name == 'push' || github.event_name == 'schedule' }}
 
-      - name: Sign image (keyless)
-        if: ${{ github.event_name == 'push' || github.event_name == 'schedule' }}
+      - name: Sign image
         run: |
-          cosign sign -y quay.io/r0x0d/${{ inputs.image }}@${{ steps.push.outputs.digest }}
+          cosign sign -y --key env://COSIGN_PRIVATE_KEY quay.io/r0x0d/${{ inputs.image }}@${{ steps.push.outputs.digest }}
         env:
-          COSIGN_EXPERIMENTAL: "1"
+          COSIGN_EXPERIMENTAL: "false"
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}

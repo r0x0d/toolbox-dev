@@ -9,7 +9,7 @@ on:
     # At the end of every day
     - cron:  '0 0 * * *'
   workflow_dispatch:
-permissions: 
+permissions:
     id-token: write
     contents: read
 jobs:
