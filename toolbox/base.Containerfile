@@ -5,7 +5,7 @@ ARG CHOWN_ID=1000:1000
 COPY --chown=${CHOWN_ID} hack/setup.sh /tmp/setup.sh
 COPY --chown=${CHOWN_ID} hack/host-runner.sh /usr/local/bin/host-runner
 
-ENV BINS rpm-ostree flatpak systemctl podman xdg-open
+ENV BINS rpm-ostree flatpak systemctl podman xdg-open firefox
 
 ENV PKGS asciinema \
     fd-find \
