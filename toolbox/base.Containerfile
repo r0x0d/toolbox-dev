@@ -4,6 +4,7 @@ ARG CHOWN_ID=1000:1000
 
 COPY --chown=${CHOWN_ID} hack/setup.sh /tmp/setup.sh
 COPY --chown=${CHOWN_ID} hack/host-runner.sh /usr/local/bin/host-runner
+COPY etc etc
 
 ENV BINS rpm-ostree flatpak systemctl podman xdg-open firefox
 
@@ -26,6 +27,7 @@ ENV PKGS asciinema \
     lua lua5.1 \
     g++ \
     pre-commit \
+    code \
     gcc \
     btop
 
