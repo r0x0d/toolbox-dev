@@ -40,7 +40,7 @@ jobs:
     uses: ./.github/workflows/build-image.yml
     with:
       context: .
-      image: toolbox-base
+      image: base
       containerfile: toolbox/base.Containerfile
     secrets: inherit
   build-dev:
@@ -52,6 +52,6 @@ jobs:
     uses: ./.github/workflows/build-image.yml
     with:
       context: .
-      image: toolbox-${{ matrix.name }}
+      image: ${{ matrix.name }}
       containerfile: toolbox/${{ matrix.name }}.Containerfile
     secrets: inherit

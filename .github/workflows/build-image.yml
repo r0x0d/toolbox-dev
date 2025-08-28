@@ -1,7 +1,7 @@
 name: Build & Push Image
 
 env:
-  REGISTRY: "quay.io/r0x0d"
+  REGISTRY: "quay.io/toolbox-dev"
   TAGS: latest ${{ github.sha }}
 
 on:
@@ -42,7 +42,7 @@ jobs:
           image: ${{ inputs.image }}
           tags: ${{ env.TAGS }}
           containerfiles: ${{ inputs.containerfile }}
-          layers: false
+          layers: true
           oci: true
 
       - name: Push image
@@ -70,7 +70,7 @@ jobs:
 
       - name: Sign image
         run: |
-          cosign sign -y --key env://COSIGN_PRIVATE_KEY quay.io/r0x0d/${{ inputs.image }}@${{ steps.push.outputs.digest }}
+          cosign sign -y --key env://COSIGN_PRIVATE_KEY ${{ env.REGISTRY }}/${{ inputs.image }}@${{ steps.push.outputs.digest }}
         env:
           COSIGN_EXPERIMENTAL: "false"
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}

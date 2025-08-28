@@ -1,4 +1,4 @@
-FROM quay.io/r0x0d/toolbox-base:latest
+FROM quay.io/toolbox-dev/base:latest
 
 COPY hack/setup.sh /tmp/setup.sh
 
