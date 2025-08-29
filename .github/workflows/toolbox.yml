@@ -35,6 +35,7 @@ jobs:
           json_array=$(printf '"%s",' "${container_names[@]}")
           json_array="[${json_array%,}]"
           echo "matrix_names=$json_array" >> $GITHUB_OUTPUT
+
   build-base:
     name: Build Dev Toolbox (base)
     uses: ./.github/workflows/build-image.yml
@@ -43,6 +44,7 @@ jobs:
       image: base
       containerfile: toolbox/base.Containerfile
     secrets: inherit
+
   build-dev:
     name: Build Dev Toolbox (${{ matrix.name }})
     needs: [build-base, prepare]
