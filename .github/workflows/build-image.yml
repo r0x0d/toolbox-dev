@@ -26,7 +26,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: quay.io/travier/podman-action@sha256:5fb15f4d3da1c35d035a0c905e4372b374081853c1c48ffc7df85bce4c3b7e8a
+      image: quay.io/travier/podman-action@sha256:3e351fa6c3dccf7f893952f3bfa2ad0bcc154b5d596afcb9ddca8e7ee9010b9b
       options: "--security-opt=label=disable --privileged --user 0:0 --device=/dev/kvm --device=/dev/fuse --volume /:/run/host:rw"
     steps:
       - name: Setup Docker config dir
