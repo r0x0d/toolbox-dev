@@ -21,7 +21,7 @@ jobs:
       matrix_names: ${{ steps.toolboxes.outputs.matrix_names }}
       matrix_contexts: ${{ steps.toolboxes.outputs.matrix_contexts }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Run script to gather container names and contexts
         id: toolboxes
