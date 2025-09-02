@@ -7,34 +7,62 @@ on:
       - '.github/workflows/toolbox.yml'
   schedule:
     # At the end of every day
-    - cron:  '0 0 * * *'
+    - cron: '0 0 * * *'
   workflow_dispatch:
+
 permissions:
-    id-token: write
-    contents: read
+  id-token: write
+  contents: read
+
 jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
       matrix_names: ${{ steps.toolboxes.outputs.matrix_names }}
+      matrix_contexts: ${{ steps.toolboxes.outputs.matrix_contexts }}
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
-      - name: Run script to gather container names
+      - uses: actions/checkout@v4
+
+      - name: Run script to gather container names and contexts
         id: toolboxes
         run: |
-          # Collect container names from the toolbox folder
+          # Initialize arrays and associative array
           container_names=()
-          for file in toolbox/*Containerfile; do
-              # Extract the name (basename of the directory or file without the .Containerfile suffix)
-              if [ "$file" != "toolbox/base.Containerfile" ]; then
-                  name=$(basename "$file" .Containerfile)
-                  container_names+=("$name")
-              fi
+          declare -A container_contexts
+
+          # Find all Containerfiles except base.Containerfile
+          for file in $(find toolbox -type f -name '*.Containerfile'); do
+            if [ "$file" != "toolbox/base.Containerfile" ]; then
+              # Extract the name (basename without .Containerfile suffix)
+              name=$(basename "$file" .Containerfile)
+              # Extract the directory path
+              dirname=$(dirname "$file")
+
+              # Add to arrays
+              container_names+=("$name")
+              container_contexts["$name"]="$dirname"
+            fi
           done
-          # Create JSON array format
-          json_array=$(printf '"%s",' "${container_names[@]}")
-          json_array="[${json_array%,}]"
-          echo "matrix_names=$json_array" >> $GITHUB_OUTPUT
+
+          # Create JSON array for names
+          names_json=$(printf '"%s",' "${container_names[@]}")
+          names_json="[${names_json%,}]"
+
+          # Create JSON object for contexts mapping
+          contexts_json="{"
+          for name in "${container_names[@]}"; do
+            contexts_json+="\"$name\":\"${container_contexts[$name]}\","
+          done
+          contexts_json="${contexts_json%,}}"
+
+          echo "matrix_names=$names_json" >> $GITHUB_OUTPUT
+          echo "matrix_contexts=$contexts_json" >> $GITHUB_OUTPUT
+
+          # Debug output
+          echo "Found containers:"
+          for name in "${container_names[@]}"; do
+            echo "  $name -> ${container_contexts[$name]}"
+          done
 
   build-base:
     name: Build Dev Toolbox (base)
@@ -55,5 +83,5 @@ jobs:
     with:
       context: .
       image: ${{ matrix.name }}
-      containerfile: toolbox/${{ matrix.name }}.Containerfile
+      containerfile: ${{ fromJson(needs.prepare.outputs.matrix_contexts)[matrix.name] }}/${{ matrix.name }}.Containerfile
     secrets: inherit
