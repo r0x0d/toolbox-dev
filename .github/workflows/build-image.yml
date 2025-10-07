@@ -25,13 +25,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: quay.io/travier/podman-action@sha256:179c61b5bb48c38cfff2b9315058a714986731ed5e7437b2242b56657100cf62
-      options: "--security-opt=label=disable --privileged --user 0:0 --device=/dev/kvm --device=/dev/fuse --volume /:/run/host:rw"
     steps:
-      - name: Setup Docker config dir
-        run: mkdir -p /github/home/.docker/
-
       - name: Checkout repo
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 

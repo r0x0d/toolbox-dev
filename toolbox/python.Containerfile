@@ -19,18 +19,10 @@ ENV PYENV_PKGS patch \
 ENV PKGS python3-devel \
     python3-pip \
     yamllint \
+    ruff \
     # dependencies for pyenv
     ${PYENV_PKGS}
 
 RUN /tmp/setup.sh
 
-RUN <<EORUN
-# Install packages using pip
-pip install --no-cache-dir ruff pyright
-
-# Install UV
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Install poetry
-curl -sSL https://install.python-poetry.org | python3 -
-EORUN
+RUN pip install --no-cache-dir pyright
