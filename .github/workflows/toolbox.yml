@@ -30,9 +30,9 @@ jobs:
           container_names=()
           declare -A container_contexts
 
-          # Find all Containerfiles except base.Containerfile
+          # Find all Containerfiles except default.Containerfile
           for file in $(find toolbox -type f -name '*.Containerfile'); do
-            if [ "$file" != "toolbox/base.Containerfile" ]; then
+            if [ "$file" != "toolbox/default.Containerfile" ]; then
               # Extract the name (basename without .Containerfile suffix)
               name=$(basename "$file" .Containerfile)
               # Extract the directory path
@@ -64,18 +64,18 @@ jobs:
             echo "  $name -> ${container_contexts[$name]}"
           done
 
-  build-base:
-    name: Build Dev Toolbox (base)
+  build-default:
+    name: Build Dev Toolbox (default)
     uses: ./.github/workflows/build-image.yml
     with:
       context: .
-      image: base
-      containerfile: toolbox/base.Containerfile
+      image: default
+      containerfile: toolbox/default.Containerfile
     secrets: inherit
 
   build-dev:
     name: Build Dev Toolbox (${{ matrix.name }})
-    needs: [build-base, prepare]
+    needs: [build-default, prepare]
     strategy:
       matrix:
         name: ${{ fromJson(needs.prepare.outputs.matrix_names) }}

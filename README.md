@@ -10,12 +10,12 @@ Currently, the boxes available in this repository are:
 
 |Base|Box|Purpose|Where|
 |---|---|---|---|
-|Fedora 42|toolbox-base|General toolbox for regular use|[toolbox-base](https://quay.io/repository/toolbox-dev/base)|
-|[toolbox-base](https://quay.io/repository/toolbox-dev/base)|toolbox-python|General toolbox for python development|[toolbox-python](https://quay.io/repository/toolbox-dev/python)|
-|[toolbox-base](https://quay.io/repository/toolbox-dev/base)|toolbox-node|General toolbox for node development|[toolbox-node](https://quay.io/repository/toolbox-dev/node)|
-|[toolbox-base](https://quay.io/repository/toolbox-dev/base)|toolbox-ruby|General toolbox for ruby development|[toolbox-ruby](https://quay.io/repository/toolbox-dev/ruby)|
-|[toolbox-base](https://quay.io/repository/toolbox-dev/base)|toolbox-rust|General toolbox for rust development|[toolbox-rust](https://quay.io/repository/toolbox-dev/rust)|
-|[toolbox-base](https://quay.io/repository/toolbox-dev/base)|toolbox-dotnet|General toolbox for dotnet development|[toolbox-dotnet](https://quay.io/repository/toolbox-dev/dotnet)|
+|Fedora 42|toolbox-default|General toolbox for regular use|[toolbox-default](https://quay.io/repository/toolbox-dev/default)|
+|[toolbox-default](https://quay.io/repository/toolbox-dev/default)|toolbox-python|General toolbox for python development|[toolbox-python](https://quay.io/repository/toolbox-dev/python)|
+|[toolbox-default](https://quay.io/repository/toolbox-dev/default)|toolbox-node|General toolbox for node development|[toolbox-node](https://quay.io/repository/toolbox-dev/node)|
+|[toolbox-default](https://quay.io/repository/toolbox-dev/default)|toolbox-ruby|General toolbox for ruby development|[toolbox-ruby](https://quay.io/repository/toolbox-dev/ruby)|
+|[toolbox-default](https://quay.io/repository/toolbox-dev/default)|toolbox-rust|General toolbox for rust development|[toolbox-rust](https://quay.io/repository/toolbox-dev/rust)|
+|[toolbox-default](https://quay.io/repository/toolbox-dev/default)|toolbox-dotnet|General toolbox for dotnet development|[toolbox-dotnet](https://quay.io/repository/toolbox-dev/dotnet)|
 
 ## Adding new toolboxes
 
@@ -23,8 +23,8 @@ Currently, all toolboxes per environment are located under the `toolbox`
 folder. If you wish to do a new toolbox environment, just simply add your
 `<environment>.Containerfile` inside that folder, and you're ready to go.
 
-As default, all images use as base the `base.Containerfile`, or
-`quay.io/toolbox-dev/base:latest` to keep them up-to-date when a new pipeline
+As default, all images use as base the `default.Containerfile`, or
+`quay.io/toolbox-dev/default:latest` to keep them up-to-date when a new pipeline
 build is triggered.
 
 ## Building locally
@@ -33,8 +33,8 @@ To build the images locally, one must need to install
 [podman](https://podman.io/), once podman is installed, just run the following: 
 
 ```bash
-# To generate the base image
-make base 
+# To generate the default image
+make default 
 
 # To generate the python image
 make python
