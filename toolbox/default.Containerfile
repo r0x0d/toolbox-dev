@@ -6,7 +6,7 @@ COPY --chown=${CHOWN_ID} hack/setup.sh /tmp/setup.sh
 COPY --chown=${CHOWN_ID} hack/symlink-host-runner.sh /tmp/symlink-host-runner.sh
 COPY --chown=${CHOWN_ID} hack/host-runner.sh /usr/local/bin/host-runner
 
-ENV BINS rpm-ostree flatpak systemctl podman xdg-open bootc firefox
+ENV BINS rpm-ostree flatpak systemctl podman xdg-open bootc firefox gh
 
 ENV PKGS asciinema \
     fd-find \
