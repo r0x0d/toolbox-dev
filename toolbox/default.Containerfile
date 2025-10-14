@@ -24,11 +24,13 @@ ENV PKGS asciinema \
     openssl-devel \
     neovim \
     luarocks \
-    lua lua5.1 \
+    lua \
+    lua5.1 \
     g++ \
     pre-commit \
     gcc \
-    btop
+    btop \
+    git-lfs
 
 # - Install common development tools
 RUN sed -i "s/enabled=1/enabled=0/" "/etc/yum.repos.d/fedora-cisco-openh264.repo" \
