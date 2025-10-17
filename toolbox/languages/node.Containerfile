@@ -8,3 +8,5 @@ ENV PKGS ShellCheck \
     pnpm
 
 RUN /tmp/setup.sh
+
+LABEL purpose="General toolbox for node development"

@@ -8,3 +8,5 @@ ENV PKGS rust \
     rust-src
 
 RUN /tmp/setup.sh
+
+LABEL purpose="General toolbox for rust development"

@@ -8,20 +8,28 @@ Inpisration for this repository came from [travier/quay-containerfiles](https://
 
 Currently, the boxes available in this repository are: 
 
-|Base|Box|Purpose|Where|
-|---|---|---|---|
-|Fedora 42|toolbox-default|General toolbox for regular use|[toolbox-default](https://quay.io/repository/toolbox-dev/default)|
-|[toolbox-default](https://quay.io/repository/toolbox-dev/default)|toolbox-python|General toolbox for python development|[toolbox-python](https://quay.io/repository/toolbox-dev/python)|
-|[toolbox-default](https://quay.io/repository/toolbox-dev/default)|toolbox-node|General toolbox for node development|[toolbox-node](https://quay.io/repository/toolbox-dev/node)|
-|[toolbox-default](https://quay.io/repository/toolbox-dev/default)|toolbox-ruby|General toolbox for ruby development|[toolbox-ruby](https://quay.io/repository/toolbox-dev/ruby)|
-|[toolbox-default](https://quay.io/repository/toolbox-dev/default)|toolbox-rust|General toolbox for rust development|[toolbox-rust](https://quay.io/repository/toolbox-dev/rust)|
-|[toolbox-default](https://quay.io/repository/toolbox-dev/default)|toolbox-dotnet|General toolbox for dotnet development|[toolbox-dotnet](https://quay.io/repository/toolbox-dev/dotnet)|
+<!-- START OF AUTOMATIC TABLE GENERATION -->
+
+|Base|Where|Purpose|
+|---|---|---|
+|[default:latest](https://quay.io/repository/toolbox-dev/default:latest)|[applications/cursor](https://quay.io/repository/toolbox-dev/applications/cursor)|A toolbox container for Cursor application|
+|[default:latest](https://quay.io/repository/toolbox-dev/default:latest)|[applications/vscode](https://quay.io/repository/toolbox-dev/applications/vscode)|A toolbox container for VSCode application|
+|[Fedora 42](registry.fedoraproject.org/fedora-toolbox:42)|[default](https://quay.io/repository/toolbox-dev/default)|General toolbox for personal use|
+|[default:latest](https://quay.io/repository/toolbox-dev/default:latest)|[languages/cpp](https://quay.io/repository/toolbox-dev/languages/cpp)|General toolbox for cpp development|
+|[default:latest](https://quay.io/repository/toolbox-dev/default:latest)|[languages/dotnet](https://quay.io/repository/toolbox-dev/languages/dotnet)|General toolbox for dotnet development|
+|[default:latest](https://quay.io/repository/toolbox-dev/default:latest)|[languages/go](https://quay.io/repository/toolbox-dev/languages/go)|General toolbox for go development|
+|[default:latest](https://quay.io/repository/toolbox-dev/default:latest)|[languages/node](https://quay.io/repository/toolbox-dev/languages/node)|General toolbox for node development|
+|[default:latest](https://quay.io/repository/toolbox-dev/default:latest)|[languages/python](https://quay.io/repository/toolbox-dev/languages/python)|General toolbox for python development|
+|[default:latest](https://quay.io/repository/toolbox-dev/default:latest)|[languages/ruby](https://quay.io/repository/toolbox-dev/languages/ruby)|General toolbox for ruby development|
+|[default:latest](https://quay.io/repository/toolbox-dev/default:latest)|[languages/rust](https://quay.io/repository/toolbox-dev/languages/rust)|General toolbox for rust development|
+
+<!-- END OF AUTOMATIC TABLE GENERATION -->
 
 ## Adding new toolboxes
 
 Currently, all toolboxes per environment are located under the `toolbox`
 folder. If you wish to do a new toolbox environment, just simply add your
-`<environment>.Containerfile` inside that folder, and you're ready to go.
+`<environment>.Containerfile` inside that folder, and you're ready to go (separated by environment, language and application).
 
 As default, all images use as base the `default.Containerfile`, or
 `quay.io/toolbox-dev/default:latest` to keep them up-to-date when a new pipeline
@@ -37,12 +45,13 @@ To build the images locally, one must need to install
 make default 
 
 # To generate the python image
-make python
+make languages/python
+
+# To generate an application toolbox
+make applications/vscode
 ```
 
-All image building options follow the
-[IMAGES](https://github.com/toolbox-dev/dev/blob/main/Makefile#L1) variable
-in our Makefile.
+A list of targets can be seen at `make targets`.
 
 ## Making use of the toolbox images
 
@@ -50,28 +59,9 @@ In order to use any of the boxes provided by this repository, you can just do:
 
 ```bash
 # For creating a python box
-toolbox create --image quay.io/toolbox-dev/python python-dev
+toolbox create --image quay.io/toolbox-dev/languages/python python-dev
+toolbox create --image quay.io/toolbox-dev/applications/vscode vscode
 ```
 
 And the same applies for all images shipped in this repository. That will pick
 whatever is in quay and pull the latest data. 
-
-If, whoever, you want to just use the locally build image, we have two
-pre-defined commands in the Makefile to assist with that.
-
-```bash
-# To create a python toolbox
-make toolbox-create-python
-
-# To enter the newly created python box
-make toolbox-enter-python
-```
-
-## Future plans
-
-A non-exhaustive list of updates that are needed for this project as we move
-into the future.
-
-- [ ] Split the toolboxes into folders to better organize the builds
-    - [ ] `environment` folder for the environmental images ({python,dotnet,node}.Containerfile and etc...)
-    - [ ] `app` folder for the application images ({emacs,vscode}.Containerfiler and etc...)

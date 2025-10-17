@@ -7,3 +7,5 @@ ENV PKGS dotnet-sdk-9.0 \
     libicu
 
 RUN /tmp/setup.sh
+
+LABEL purpose="General toolbox for dotnet development"

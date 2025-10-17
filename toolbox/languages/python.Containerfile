@@ -26,3 +26,5 @@ ENV PKGS python3-devel \
 RUN /tmp/setup.sh
 
 RUN pip install --no-cache-dir pyright
+
+LABEL purpose="General toolbox for python development"

@@ -41,3 +41,5 @@ RUN sed -i "s/enabled=1/enabled=0/" "/etc/yum.repos.d/fedora-cisco-openh264.repo
 RUN /tmp/symlink-host-runner.sh
 
 RUN /tmp/setup.sh
+
+LABEL purpose="General toolbox for personal use"

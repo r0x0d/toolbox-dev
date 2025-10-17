@@ -7,3 +7,5 @@ ENV PKGS ruby \
     rvm 
 
 RUN /tmp/setup.sh
+
+LABEL purpose="General toolbox for ruby development"
