@@ -20,6 +20,7 @@ ENV PKGS python3-devel \
     python3-pip \
     yamllint \
     ruff \
+    pre-commit \
     # dependencies for pyenv
     ${PYENV_PKGS}
 
