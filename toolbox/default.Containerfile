@@ -8,6 +8,7 @@ COPY --chown=${CHOWN_ID} hack/host-runner.sh /usr/local/bin/host-runner
 
 ENV BINS rpm-ostree flatpak systemctl podman xdg-open bootc firefox gh skopeo
 
+# - Install common development tools
 ENV PKGS asciinema \
     fd-find \
     shfmt \
@@ -19,16 +20,11 @@ ENV PKGS asciinema \
     ripgrep \
     vim-X11 \
     openssl-devel \
-    neovim \
-    luarocks \
-    lua \
-    lua5.1 \
     g++ \
     gcc \
     btop \
     git-lfs
 
-# - Install common development tools
 RUN sed -i "s/enabled=1/enabled=0/" "/etc/yum.repos.d/fedora-cisco-openh264.repo" \
     && echo "fastestmirror=true" >> /etc/dnf/dnf.conf \
     && echo "max_parallel_downloads=20" >> /etc/dnf/dnf.conf
