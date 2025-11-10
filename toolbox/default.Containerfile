@@ -23,6 +23,7 @@ ENV PKGS asciinema \
     g++ \
     gcc \
     btop \
+    fish \
     git-lfs
 
 RUN sed -i "s/enabled=1/enabled=0/" "/etc/yum.repos.d/fedora-cisco-openh264.repo" \
