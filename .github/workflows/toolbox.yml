@@ -95,6 +95,7 @@ jobs:
     strategy:
       matrix:
         name: ${{ fromJson(needs.prepare.outputs.matrix_names) }}
+      fail-fast: false # Don't fail all the workflows if one image fails for some reason.
     with:
       context: .
       image: ${{ fromJson(needs.prepare.outputs.matrix_contexts_short)[matrix.name] }}/${{ matrix.name }}
