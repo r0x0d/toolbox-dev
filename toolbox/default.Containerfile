@@ -14,7 +14,7 @@ ENV PKGS asciinema \
     shfmt \
     fzf \
     git-credential-libsecret \
-    inotify-tools \
+    fish \
     jq \
     make \
     ripgrep \
@@ -22,8 +22,6 @@ ENV PKGS asciinema \
     openssl-devel \
     g++ \
     gcc \
-    btop \
-    fish \
     git-lfs
 
 RUN sed -i "s/enabled=1/enabled=0/" "/etc/yum.repos.d/fedora-cisco-openh264.repo" \
