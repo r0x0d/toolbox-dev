@@ -6,5 +6,6 @@ ENV PKGS go
 
 RUN /tmp/setup.sh
 
-LABEL purpose="General toolbox for go development"
+RUN go install golang.org/x/tools/gopls@latest
 
+LABEL purpose="General toolbox for go development"

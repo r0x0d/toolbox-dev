@@ -1,12 +1,12 @@
 # Toolbox Development Images
 
-This is my personal set of toolbox development boxes (and general use). 
+This is my personal set of toolbox development boxes (and general use).
 
 Inpisration for this repository came from [travier/quay-containerfiles](https://github.com/travier/quay-containerfiles).
 
 ## Toolboxes available
 
-Currently, the boxes available in this repository are: 
+Currently, the boxes available in this repository are:
 
 <!-- START OF AUTOMATIC TABLE GENERATION -->
 
@@ -38,11 +38,11 @@ build is triggered.
 ## Building locally
 
 To build the images locally, one must need to install
-[podman](https://podman.io/), once podman is installed, just run the following: 
+[podman](https://podman.io/), once podman is installed, just run the following:
 
 ```bash
 # To generate the default image
-make default 
+make default
 
 # To generate the python image
 make languages/python
@@ -55,7 +55,7 @@ A list of targets can be seen at `make targets`.
 
 ## Making use of the toolbox images
 
-In order to use any of the boxes provided by this repository, you can just do: 
+In order to use any of the boxes provided by this repository, you can just do:
 
 ```bash
 # For creating a python box
@@ -64,4 +64,4 @@ toolbox create --image quay.io/toolbox-dev/applications/vscode vscode
 ```
 
 And the same applies for all images shipped in this repository. That will pick
-whatever is in quay and pull the latest data. 
+whatever is in quay and pull the latest data.

@@ -37,8 +37,12 @@ RUN /tmp/symlink-host-runner.sh
 RUN /tmp/setup.sh
 
 # Docker language server
-RUN curl https://github.com/docker/docker-language-server/releases/download/v0.20.1/docker-language-server-linux-amd64-v0.20.1 -o /usr/local/bin/docker-language-server \
-    && chmod u+x /usr/local/bin/docker-language-server
+RUN curl -s https://api.github.com/repos/docker/docker-language-server/releases/latest \
+    | grep "browser_download_url.*linux-amd64" \
+    | cut -d '"' -f 4 \
+    | xargs -I {} sh -c 'curl -L {} -o /usr/local/bin/docker-language-server' \
+    && chmod u+x /usr/local/bin/docker-language-server \
+    && chown ${CHOWN_ID} /usr/local/bin/docker-language-server
 
 RUN npm i -g vscode-langservers-extracted yaml-language-server
 

@@ -8,4 +8,6 @@ ENV PKGS dotnet-sdk-9.0 \
 
 RUN /tmp/setup.sh
 
+RUN dotnet tool install --global csharp-ls
+
 LABEL purpose="General toolbox for dotnet development"

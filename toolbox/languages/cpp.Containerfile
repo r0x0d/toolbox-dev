@@ -6,6 +6,7 @@ ENV PKGS g++ \
          gcc \
          gcc-c++ \
          ctags \
+         clangd \
          cmake
 
 RUN /tmp/setup.sh
