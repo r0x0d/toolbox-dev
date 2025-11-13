@@ -7,3 +7,4 @@ ENV PKGS go
 RUN /tmp/setup.sh
 
 LABEL purpose="General toolbox for go development"
+
