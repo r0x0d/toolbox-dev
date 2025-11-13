@@ -24,6 +24,7 @@ ENV PKGS asciinema \
     g++ \
     gcc \
     rpm-spec-language-server \
+    nodejs-bash-language-server \
     git-lfs
 
 RUN sed -i "s/enabled=1/enabled=0/" "/etc/yum.repos.d/fedora-cisco-openh264.repo" \
@@ -34,5 +35,11 @@ RUN sed -i "s/enabled=1/enabled=0/" "/etc/yum.repos.d/fedora-cisco-openh264.repo
 RUN /tmp/symlink-host-runner.sh
 
 RUN /tmp/setup.sh
+
+# Docker language server
+RUN curl https://github.com/docker/docker-language-server/releases/download/v0.20.1/docker-language-server-linux-amd64-v0.20.1 -o /usr/local/bin/docker-language-server \
+    && chmod u+x /usr/local/bin/docker-language-server
+
+RUN npm i -g vscode-langservers-extracted yaml-language-server
 
 LABEL purpose="General toolbox for personal use"
