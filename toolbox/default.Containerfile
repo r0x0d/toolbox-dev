@@ -44,6 +44,6 @@ RUN curl -s https://api.github.com/repos/docker/docker-language-server/releases/
     && chmod u+x /usr/local/bin/docker-language-server \
     && chown ${CHOWN_ID} /usr/local/bin/docker-language-server
 
-RUN npm i -g vscode-langservers-extracted yaml-language-server
+RUN npm i -g vscode-langservers-extracted yaml-language-server @johnnymorganz/stylua-bin
 
 LABEL purpose="General toolbox for personal use"
