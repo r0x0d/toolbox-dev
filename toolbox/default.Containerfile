@@ -15,7 +15,6 @@ ENV PKGS asciinema \
     shfmt \
     fzf \
     git-credential-libsecret \
-    fish \
     jq \
     make \
     ripgrep \
