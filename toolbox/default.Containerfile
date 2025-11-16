@@ -7,6 +7,7 @@ COPY --chown=${CHOWN_ID} hack/symlink-host-runner.sh /tmp/symlink-host-runner.sh
 COPY --chown=${CHOWN_ID} hack/host-runner.sh /usr/local/bin/host-runner
 
 ENV BINS rpm-ostree flatpak systemctl podman xdg-open bootc firefox gh skopeo
+ENV PATH $PATH:/opt/luals/bin
 
 # - Install common development tools
 ENV PKGS asciinema \
@@ -35,6 +36,17 @@ RUN sed -i "s/enabled=1/enabled=0/" "/etc/yum.repos.d/fedora-cisco-openh264.repo
 RUN /tmp/symlink-host-runner.sh
 
 RUN /tmp/setup.sh
+
+# Lua language server
+RUN curl -s https://api.github.com/repos/LuaLS/lua-language-server/releases/latest \
+    | grep "browser_download_url.*linux-x64.tar.gz" \
+    | cut -d '"' -f 4 \
+    | xargs -I {} sh -c 'curl -L {} -o /opt/luals.tar.gz' \
+    && mkdir /opt/luals \
+    && mkdir -p /opt/luals/log/cache \
+    && chown -R ${CHOWN_ID} /opt/luals/log \
+    && tar xvf /opt/luals.tar.gz -C /opt/luals \
+    && rm /opt/luals.tar.gz
 
 # Docker language server
 RUN curl -s https://api.github.com/repos/docker/docker-language-server/releases/latest \
