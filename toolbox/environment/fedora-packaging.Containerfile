@@ -2,7 +2,7 @@ FROM quay.io/toolbox-dev/default:latest
 
 COPY hack/setup.sh /tmp/setup.sh
 
-ENV PKGS fedpkg packit copr-rpmbuild
+ENV PKGS fedpkg packit copr-rpmbuild copr
 
 RUN /tmp/setup.sh
 

@@ -23,6 +23,7 @@ ENV PKGS asciinema \
     openssl-devel \
     g++ \
     gcc \
+    zstd \
     rpm-spec-language-server \
     nodejs-bash-language-server \
     git-lfs
