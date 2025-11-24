@@ -24,6 +24,7 @@ ENV PKGS asciinema \
     g++ \
     gcc \
     zstd \
+    fish \
     rpm-spec-language-server \
     nodejs-bash-language-server \
     git-lfs
