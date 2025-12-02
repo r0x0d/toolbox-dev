@@ -9,7 +9,8 @@ ENV PKGS fedpkg \
     rust2rpm \
     go2rpm \
     cargo2rpm \
-    pyp2rpm \
+    pyp2spec \
+    tomcli \
     rubygem-gem2rpm
 
 RUN /tmp/setup.sh
