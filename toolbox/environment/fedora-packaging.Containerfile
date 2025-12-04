@@ -11,8 +11,12 @@ ENV PKGS fedpkg \
     cargo2rpm \
     pyp2spec \
     tomcli \
+    python3-pip \
     rubygem-gem2rpm
 
 RUN /tmp/setup.sh
+
+# Install nice-to-have tools for packaging
+RUN python3 -m pip install woolly fuzzytail cookiecutter
 
 LABEL purpose="A toolbox container for Fedora Packaging environment"
