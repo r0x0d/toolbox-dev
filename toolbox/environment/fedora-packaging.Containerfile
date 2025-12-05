@@ -17,6 +17,11 @@ ENV PKGS fedpkg \
 RUN /tmp/setup.sh
 
 # Install nice-to-have tools for packaging
-RUN python3 -m pip install woolly fuzzytail cookiecutter
+RUN python3 -m pip install \
+    woolly \
+    fuzzytail \
+    cookiecutter \
+    # Needed for cookiecutter
+    jinja2_time
 
 LABEL purpose="A toolbox container for Fedora Packaging environment"
