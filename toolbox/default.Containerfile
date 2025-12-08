@@ -12,6 +12,7 @@ ENV PATH $PATH:/opt/luals/bin
 # - Install common development tools
 ENV PKGS asciinema \
     fd-find \
+    fish \
     shfmt \
     fzf \
     git-credential-libsecret \
