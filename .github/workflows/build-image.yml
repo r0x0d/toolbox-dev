@@ -23,9 +23,22 @@ on:
         required: true
 
 jobs:
+  # ===========================================
+  # Build Stage
+  # ===========================================
   build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
+      - name: Set artifact name
+        id: artifact
+        run: |
+          SAFE_NAME="${IMAGE//\//-}"
+          echo "name=image-${SAFE_NAME}" >> $GITHUB_OUTPUT
+          echo "tarball=${SAFE_NAME}.tar" >> $GITHUB_OUTPUT
+        env:
+          IMAGE: ${{ inputs.image }}
+
       - name: Checkout repo
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
@@ -39,6 +52,205 @@ jobs:
           layers: true
           oci: true
 
+      - name: Save image to tarball
+        run: |
+          mkdir -p /tmp/image
+          podman save -o /tmp/image/${{ steps.artifact.outputs.tarball }} localhost/${{ inputs.image }}:latest
+
+      - name: Upload image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.artifact.outputs.name }}
+          path: /tmp/image/${{ steps.artifact.outputs.tarball }}
+          retention-days: 1
+
+  # ===========================================
+  # Lint Stage (runs in parallel with build)
+  # ===========================================
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+
+      - name: Lint Containerfile with Hadolint
+        uses: hadolint/hadolint-action@54c9adbab1582c2ef04b2016b760714a4bfde3cf # v3.1.0
+        with:
+          dockerfile: ${{ inputs.containerfile }}
+          failure-threshold: warning
+
+  # ===========================================
+  # Security Stage
+  # ===========================================
+  security:
+    name: Security
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Set artifact name
+        id: artifact
+        run: |
+          SAFE_NAME="${IMAGE//\//-}"
+          echo "name=image-${SAFE_NAME}" >> $GITHUB_OUTPUT
+          echo "tarball=${SAFE_NAME}.tar" >> $GITHUB_OUTPUT
+        env:
+          IMAGE: ${{ inputs.image }}
+
+      - name: Download image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ steps.artifact.outputs.name }}
+          path: /tmp/image
+
+      - name: Checkout repo for trivyignore
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        with:
+          sparse-checkout: .trivyignore
+          sparse-checkout-cone-mode: false
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@915b19bbe73b92a6cf82a1bc12b087c9a19a5fe2 # v0.28.0
+        with:
+          input: /tmp/image/${{ steps.artifact.outputs.tarball }}
+          format: table
+          exit-code: 1
+          ignore-unfixed: true
+          vuln-type: os,library
+          severity: CRITICAL,HIGH
+          trivyignores: .trivyignore
+
+      - name: Load image for malicious package scan
+        run: podman load -i /tmp/image/${{ steps.artifact.outputs.tarball }}
+
+      - name: Download malicious package scripts
+        run: |
+          curl -sSL https://raw.githubusercontent.com/Red-Hat-Information-Security/Incident-Response/main/npm-malicious-package-check.py -o /tmp/npm-malicious-package-check.py
+          curl -sSL https://raw.githubusercontent.com/Red-Hat-Information-Security/Incident-Response/main/shai-hulud-package-check.py -o /tmp/shai-hulud-package-check.py
+
+      - name: Run malicious package scan
+        run: |
+          podman run --rm \
+            -v /tmp/npm-malicious-package-check.py:/tmp/npm-malicious-package-check.py:ro \
+            -v /tmp/shai-hulud-package-check.py:/tmp/shai-hulud-package-check.py:ro \
+            localhost/${{ inputs.image }}:latest \
+            bash -c "
+              pip install --quiet requests pyyaml 2>/dev/null || dnf install -y python3-requests python3-pyyaml 2>/dev/null || true
+              echo '=== Running npm malicious package checker ==='
+              python3 /tmp/npm-malicious-package-check.py
+              echo '=== Running Shai-Hulud package checker ==='
+              python3 /tmp/shai-hulud-package-check.py
+            "
+
+  # ===========================================
+  # Test Stage
+  # ===========================================
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Set artifact name
+        id: artifact
+        run: |
+          SAFE_NAME="${IMAGE//\//-}"
+          echo "name=image-${SAFE_NAME}" >> $GITHUB_OUTPUT
+          echo "tarball=${SAFE_NAME}.tar" >> $GITHUB_OUTPUT
+        env:
+          IMAGE: ${{ inputs.image }}
+
+      - name: Download image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ steps.artifact.outputs.name }}
+          path: /tmp/image
+
+      - name: Load image
+        run: podman load -i /tmp/image/${{ steps.artifact.outputs.tarball }}
+
+      - name: Test container starts successfully
+        run: |
+          echo "=== Testing container can start ==="
+          podman run --rm localhost/${{ inputs.image }}:latest echo "Container started successfully"
+
+      - name: Test shell availability
+        run: |
+          echo "=== Testing shell availability ==="
+          podman run --rm localhost/${{ inputs.image }}:latest bash -c "echo 'Bash is available'"
+          podman run --rm localhost/${{ inputs.image }}:latest sh -c "echo 'Shell is available'"
+
+      - name: Test basic system commands
+        run: |
+          echo "=== Testing basic system commands ==="
+          podman run --rm localhost/${{ inputs.image }}:latest bash -c "
+            set -e
+            echo 'Testing: whoami'
+            whoami
+            echo 'Testing: pwd'
+            pwd
+            echo 'Testing: ls'
+            ls -la /
+            echo 'Testing: cat /etc/os-release'
+            cat /etc/os-release
+            echo 'All basic system commands passed!'
+          "
+
+      - name: Test network utilities
+        run: |
+          echo "=== Testing network utilities ==="
+          podman run --rm localhost/${{ inputs.image }}:latest bash -c "
+            set -e
+            echo 'Testing: curl'
+            curl --version || echo 'curl not installed (optional)'
+            echo 'Testing: ping availability'
+            which ping || echo 'ping not installed (optional)'
+            echo 'Network utilities check complete!'
+          "
+
+      - name: Test package manager
+        run: |
+          echo "=== Testing package manager ==="
+          podman run --rm localhost/${{ inputs.image }}:latest bash -c "
+            if command -v dnf &> /dev/null; then
+              echo 'DNF is available'
+              dnf --version
+            elif command -v apt &> /dev/null; then
+              echo 'APT is available'
+              apt --version
+            else
+              echo 'No known package manager found'
+            fi
+          "
+
+  # ===========================================
+  # Push Stage
+  # ===========================================
+  push:
+    name: Push
+    runs-on: ubuntu-latest
+    needs: [lint, security, test]
+    steps:
+      - name: Set artifact name
+        id: artifact
+        run: |
+          SAFE_NAME="${IMAGE//\//-}"
+          echo "name=image-${SAFE_NAME}" >> $GITHUB_OUTPUT
+          echo "tarball=${SAFE_NAME}.tar" >> $GITHUB_OUTPUT
+        env:
+          IMAGE: ${{ inputs.image }}
+
+      - name: Download image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ steps.artifact.outputs.name }}
+          path: /tmp/image
+
+      - name: Load and tag image
+        run: |
+          podman load -i /tmp/image/${{ steps.artifact.outputs.tarball }}
+          # Tag with all required tags (the tarball only contains :latest)
+          podman tag localhost/${{ inputs.image }}:latest localhost/${{ inputs.image }}:${{ github.sha }}
+
       - name: Push image
         uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # v2
         id: push
@@ -49,6 +261,7 @@ jobs:
           registry: ${{ env.REGISTRY }}
           tags: ${{ env.TAGS }}
           extra-args: |
+            --format=oci
             --compression-format=zstd:chunked
             --compression-level=19
 

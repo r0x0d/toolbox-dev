@@ -1,0 +1,9 @@
+# Ignore CVEs that are not yet fixed in upstream Fedora packages
+# Review and remove these once fixes are available
+
+# containerd permissions issue - waiting for Fedora to update to 1.7.29+
+CVE-2024-25621
+
+# Go crypto/x509 resource exhaustion - waiting for Go package updates
+CVE-2025-61729
+

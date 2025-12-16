@@ -26,6 +26,6 @@ ENV PKGS python3-devel \
 
 RUN /tmp/setup.sh
 
-RUN pip install --no-cache-dir pyright
+RUN pip install --no-cache-dir pyright==1.1.407
 
 LABEL purpose="General toolbox for python development"

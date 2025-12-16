@@ -20,7 +20,6 @@ ENV PKGS asciinema \
     jq \
     make \
     ripgrep \
-    vim-X11 \
     neovim \
     openssl-devel \
     g++ \
