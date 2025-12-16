@@ -31,48 +31,48 @@ jobs:
           container_names=()
           declare -A container_contexts
           declare -A container_contexts_short
-          
+
           # Find all Containerfiles except default.Containerfile
           for file in $(find toolbox -type f -name '*.Containerfile'); do
             if [ "$file" != "toolbox/default.Containerfile" ]; then
               # Extract the name (basename without .Containerfile suffix)
               name=$(basename "$file" .Containerfile)
-              
+
               # Extract the directory path
               dirname=$(dirname "$file")
-              
+
               # Create short path without "toolbox/" prefix
               short_path="${dirname#toolbox/}"
-              
+
               # Add to arrays
               container_names+=("$name")
               container_contexts["$name"]="$dirname"
               container_contexts_short["$name"]="$short_path"
             fi
           done
-          
+
           # Create JSON array for names
           names_json=$(printf '"%s",' "${container_names[@]}")
           names_json="[${names_json%,}]"
-          
+
           # Create JSON object for contexts mapping
           contexts_json="{"
           for name in "${container_names[@]}"; do
             contexts_json+="\"$name\":\"${container_contexts[$name]}\","
           done
           contexts_json="${contexts_json%,}}"
-          
+
           # Create JSON object for short contexts mapping
           contexts_short_json="{"
           for name in "${container_names[@]}"; do
             contexts_short_json+="\"$name\":\"${container_contexts_short[$name]}\","
           done
           contexts_short_json="${contexts_short_json%,}}"
-          
+
           echo "matrix_names=$names_json" >> $GITHUB_OUTPUT
           echo "matrix_contexts=$contexts_json" >> $GITHUB_OUTPUT
           echo "matrix_contexts_short=$contexts_short_json" >> $GITHUB_OUTPUT
-          
+
           # Debug output
           echo "Found containers:"
           for name in "${container_names[@]}"; do
