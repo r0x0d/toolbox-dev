@@ -13,8 +13,9 @@ Currently, the boxes available in this repository are:
 |Base|Where|Purpose|
 |---|---|---|
 |[default:latest](https://quay.io/repository/toolbox-dev/default:latest)|[applications/cursor](https://quay.io/repository/toolbox-dev/applications/cursor)|A toolbox container for Cursor application|
-|[default:latest](https://quay.io/repository/toolbox-dev/default:latest)|[applications/vscode](https://quay.io/repository/toolbox-dev/applications/vscode)|A toolbox container for VSCode application|
+|[languages/dotnet:latest](https://quay.io/repository/toolbox-dev/languages/dotnet:latest)|[applications/godot](https://quay.io/repository/toolbox-dev/applications/godot)|A toolbox container for Godot application|
 |[Fedora 43](registry.fedoraproject.org/fedora-toolbox:43)|[default](https://quay.io/repository/toolbox-dev/default)|General toolbox for personal use|
+|[default:latest](https://quay.io/repository/toolbox-dev/default:latest)|[environment/fedora-packaging](https://quay.io/repository/toolbox-dev/environment/fedora-packaging)|A toolbox container for Fedora Packaging environment|
 |[default:latest](https://quay.io/repository/toolbox-dev/default:latest)|[languages/cpp](https://quay.io/repository/toolbox-dev/languages/cpp)|General toolbox for cpp development|
 |[default:latest](https://quay.io/repository/toolbox-dev/default:latest)|[languages/dotnet](https://quay.io/repository/toolbox-dev/languages/dotnet)|General toolbox for dotnet development|
 |[default:latest](https://quay.io/repository/toolbox-dev/default:latest)|[languages/go](https://quay.io/repository/toolbox-dev/languages/go)|General toolbox for go development|
