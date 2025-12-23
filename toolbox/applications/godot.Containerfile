@@ -4,7 +4,7 @@ FROM quay.io/toolbox-dev/languages/dotnet:latest
 ARG GODOT_VERSION="4.5.1-stable"
 ARG CHOWN_ID=1000:1000
 
-COPY --chown=${CHOWN_ID} hack/godot-nvidia.sh /usr/local/bin/godot-nvidia
+COPY --chown=${CHOWN_ID} hack/godot-wrapper.sh /usr/local/bin/godot-wrapper
 COPY hack/setup.sh /tmp/setup.sh
 
 ENV PKGS ca-certificates \
