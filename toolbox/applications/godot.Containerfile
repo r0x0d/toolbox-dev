@@ -19,7 +19,11 @@ ENV PKGS ca-certificates \
     libdecor \
     libwayland-egl \
     libwayland-cursor \
-    libxkbcommon
+    libxkbcommon \
+    vulkan-loader \
+    vulkan-validation-layers \
+    vulkan-tools \
+    wayland-devel
 
 ENV GODOT_VERSION=${GODOT_VERSION}
 ENV DOWNLOAD_URL="https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_mono_linux_x86_64.zip"
