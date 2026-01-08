@@ -4,15 +4,19 @@ COPY hack/setup.sh /tmp/setup.sh
 
 ENV PKGS fedpkg \
     packit \
-    copr-rpmbuild \
     copr \
+    copr-rpmbuild \
+    # Packaging tools
     rust2rpm \
     go2rpm \
     cargo2rpm \
     pyp2spec \
+    rubygem-gem2rpm \
+    # Patch tools
+    patch \
     tomcli \
-    python3-pip \
-    rubygem-gem2rpm
+    # Misc
+    python3-pip
 
 RUN /tmp/setup.sh
 
