@@ -2,8 +2,8 @@ FROM quay.io/toolbox-dev/default:latest
 
 COPY hack/setup.sh /tmp/setup.sh
 
-ENV PKGS go
+ENV PKGS zig
 
 RUN /tmp/setup.sh
 
-LABEL purpose="General toolbox for go development"
+LABEL purpose="General toolbox for zig development"
