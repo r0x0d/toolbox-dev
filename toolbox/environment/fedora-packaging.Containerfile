@@ -16,7 +16,8 @@ ENV PKGS fedpkg \
     patch \
     tomcli \
     # Misc
-    python3-pip
+    python3-pip \
+    xxd
 
 RUN /tmp/setup.sh
 
