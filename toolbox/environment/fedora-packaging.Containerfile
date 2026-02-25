@@ -17,7 +17,11 @@ ENV PKGS fedpkg \
     tomcli \
     # Misc
     python3-pip \
-    xxd
+    xxd \
+    # Specfile macros
+    pyproject-rpm-macros \
+    cargo-rpm-macros
+
 
 RUN /tmp/setup.sh
 

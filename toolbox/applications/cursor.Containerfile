@@ -11,4 +11,6 @@ RUN CURSOR_RPM_URL=$(curl -sL https://cursor.com/downloads \
     export PKGS="$CURSOR_RPM_URL" && \
     /tmp/setup.sh
 
+RUN curl https://cursor.com/install -fsS | bash
+
 LABEL purpose="A toolbox container for Cursor application"
