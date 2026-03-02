@@ -24,6 +24,7 @@ ENV PKGS asciinema \
     gcc \
     zstd \
     strace \
+    ksshaskpass \
     git-lfs
 
 RUN sed -i "s/enabled=1/enabled=0/" "/etc/yum.repos.d/fedora-cisco-openh264.repo" \
