@@ -18,7 +18,7 @@ ENV PKGS asciinema \
     jq \
     make \
     ripgrep \
-    neovim \
+    vimx \
     openssl-devel \
     g++ \
     gcc \
