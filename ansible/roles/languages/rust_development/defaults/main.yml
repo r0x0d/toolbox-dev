@@ -1,0 +1,5 @@
+---
+rust_development_binaries:
+  - rustc
+  - cargo
+  - rustup

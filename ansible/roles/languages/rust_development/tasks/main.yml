@@ -1,0 +1,33 @@
+---
+- name: Install rustup and build tools
+  ansible.builtin.dnf:
+    name:
+      - rustup
+      - cmake
+      - clang-devel
+    state: present
+  when: languages.rust_development | default(false) | bool
+
+- name: Initialize rustup default toolchain
+  ansible.builtin.command: rustup-init -y
+  args:
+    creates: "{{ tdx_user_home }}/.cargo/bin/rustc"
+  become: false
+  become_user: "{{ tdx_user }}"
+  when: languages.rust_development | default(false) | bool
+
+- name: Create wrapper scripts
+  ansible.builtin.template:
+    src: "{{ playbook_dir }}/templates/bin-wrapper.sh.j2"
+    dest: "{{ tdx_user_bin }}/{{ item }}"
+    owner: "{{ tdx_user }}"
+    mode: "0755"
+  loop: "{{ rust_development_binaries }}"
+  when: languages.rust_development | default(false) | bool
+
+- name: Remove wrapper scripts
+  ansible.builtin.file:
+    path: "{{ tdx_user_bin }}/{{ item }}"
+    state: absent
+  loop: "{{ rust_development_binaries }}"
+  when: not (languages.rust_development | default(false) | bool)

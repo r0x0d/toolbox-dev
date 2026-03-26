@@ -1,0 +1,12 @@
+---
+host_runner_binaries:
+  - rpm-ostree
+  - flatpak
+  - systemctl
+  - podman
+  - xdg-open
+  - bootc
+  - firefox
+  - gh
+  - skopeo
+  - clamav

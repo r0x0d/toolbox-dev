@@ -1,0 +1,14 @@
+---
+- name: Upgrade all packages
+  ansible.builtin.dnf:
+    name: "*"
+    state: latest
+
+- name: Install base packages
+  ansible.builtin.dnf:
+    name: "{{ base_packages }}"
+    state: present
+
+- name: Clean dnf cache
+  ansible.builtin.command: dnf clean all
+  changed_when: false

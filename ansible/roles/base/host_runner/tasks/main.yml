@@ -1,0 +1,14 @@
+---
+- name: Install host-runner script
+  ansible.builtin.copy:
+    src: host-runner.sh
+    dest: /usr/local/bin/host-runner
+    mode: "0755"
+
+- name: Create symlinks for host binaries
+  ansible.builtin.file:
+    src: /usr/local/bin/host-runner
+    dest: "/usr/local/bin/{{ item }}"
+    state: link
+    force: true
+  loop: "{{ host_runner_binaries }}"

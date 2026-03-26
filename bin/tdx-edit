@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+TDX_CONFIG="${TDX_CONFIG:-$HOME/.config/toolbox-dev/config.yml}"
+
+if [ ! -f "$TDX_CONFIG" ]; then
+    mkdir -p "$(dirname "$TDX_CONFIG")"
+    cp /usr/share/toolbox-dev/defaults.yml "$TDX_CONFIG"
+fi
+
+"${EDITOR:-vi}" "$TDX_CONFIG"

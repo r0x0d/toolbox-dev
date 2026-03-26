@@ -1,0 +1,38 @@
+---
+- name: Install Ruby packages
+  ansible.builtin.dnf:
+    name:
+      - ruby
+      - ruby-devel
+      - rvm
+    state: present
+  when: languages.ruby_development | default(false) | bool
+
+- name: Install Ruby LSP gems
+  community.general.gem:
+    name: "{{ item.name }}"
+    version: "{{ item.version }}"
+    state: present
+  loop:
+    - {name: ruby-lsp, version: "0.26.4"}
+    - {name: ruby-lsp-rails, version: "0.4.8"}
+    - {name: ruby-lsp-rspec, version: "0.1.28"}
+    - {name: ruby-lsp-rubyfmt, version: "0.1.0"}
+    - {name: ruby-lsp-rake, version: "0.3.6"}
+  when: languages.ruby_development | default(false) | bool
+
+- name: Create wrapper scripts
+  ansible.builtin.template:
+    src: "{{ playbook_dir }}/templates/bin-wrapper.sh.j2"
+    dest: "{{ tdx_user_bin }}/{{ item }}"
+    owner: "{{ tdx_user }}"
+    mode: "0755"
+  loop: "{{ ruby_development_binaries }}"
+  when: languages.ruby_development | default(false) | bool
+
+- name: Remove wrapper scripts
+  ansible.builtin.file:
+    path: "{{ tdx_user_bin }}/{{ item }}"
+    state: absent
+  loop: "{{ ruby_development_binaries }}"
+  when: not (languages.ruby_development | default(false) | bool)

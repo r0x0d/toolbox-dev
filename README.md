@@ -1,68 +1,49 @@
-# Toolbox Development Images
+# toolbox-dev
 
-This is my personal set of toolbox development boxes (and general use).
+A configurable development toolbox container built on [Fedora Toolbox](https://containertoolbx.org/).
 
-Inpisration for this repository came from [travier/quay-containerfiles](https://github.com/travier/quay-containerfiles).
+One container image, multiple language environments -- enabled via Ansible roles and a simple YAML config.
 
-## Toolboxes available
+## Quick start
 
-Currently, the boxes available in this repository are:
+```bash
+# Create and enter the toolbox
+toolbox create --image quay.io/toolbox-dev/toolbox-dev:latest dev
+toolbox enter dev
 
-<!-- START OF AUTOMATIC TABLE GENERATION -->
+# Configure your languages
+tdx-edit
 
-|Base|Where|Purpose|
-|---|---|---|
-|[default:latest](https://quay.io/repository/toolbox-dev/default:latest)|[applications/cursor](https://quay.io/repository/toolbox-dev/applications/cursor)|A toolbox container for Cursor application|
-|[languages/dotnet:latest](https://quay.io/repository/toolbox-dev/languages/dotnet:latest)|[applications/godot](https://quay.io/repository/toolbox-dev/applications/godot)|A toolbox container for Godot application|
-|[Fedora 43](registry.fedoraproject.org/fedora-toolbox:43)|[default](https://quay.io/repository/toolbox-dev/default)|General toolbox for personal use|
-|[default:latest](https://quay.io/repository/toolbox-dev/default:latest)|[environment/fedora-packaging](https://quay.io/repository/toolbox-dev/environment/fedora-packaging)|A toolbox container for Fedora Packaging environment|
-|[default:latest](https://quay.io/repository/toolbox-dev/default:latest)|[languages/cpp](https://quay.io/repository/toolbox-dev/languages/cpp)|General toolbox for cpp development|
-|[default:latest](https://quay.io/repository/toolbox-dev/default:latest)|[languages/dotnet](https://quay.io/repository/toolbox-dev/languages/dotnet)|General toolbox for dotnet development|
-|[default:latest](https://quay.io/repository/toolbox-dev/default:latest)|[languages/go](https://quay.io/repository/toolbox-dev/languages/go)|General toolbox for go development|
-|[default:latest](https://quay.io/repository/toolbox-dev/default:latest)|[languages/node](https://quay.io/repository/toolbox-dev/languages/node)|General toolbox for node development|
-|[default:latest](https://quay.io/repository/toolbox-dev/default:latest)|[languages/python](https://quay.io/repository/toolbox-dev/languages/python)|General toolbox for python development|
-|[default:latest](https://quay.io/repository/toolbox-dev/default:latest)|[languages/ruby](https://quay.io/repository/toolbox-dev/languages/ruby)|General toolbox for ruby development|
-|[default:latest](https://quay.io/repository/toolbox-dev/default:latest)|[languages/rust](https://quay.io/repository/toolbox-dev/languages/rust)|General toolbox for rust development|
+# Apply the configuration
+tdx-apply
+```
 
-<!-- END OF AUTOMATIC TABLE GENERATION -->
+## Available roles
 
-## Adding new toolboxes
+| Role | Config key | Description |
+|------|-----------|-------------|
+| Python | `languages.python_development` | Python 3, pip, ruff, pre-commit, pyright |
+| Node.js | `languages.nodejs_development` | Node.js, pnpm, yarn |
+| Go | `languages.go_development` | Go compiler |
+| Rust | `languages.rust_development` | Rust via rustup, cmake, clang |
+| C++ | `languages.cpp_development` | GCC, G++, clangd, cmake, ctags |
+| Ruby | `languages.ruby_development` | Ruby, RVM, ruby-lsp |
+| .NET | `languages.dotnet_development` | .NET 10.0 SDK and runtime |
+| Zig | `languages.zig_development` | Zig compiler |
+| Fedora Packaging | `environments.fedora_packaging` | fedpkg, packit, COPR tools |
 
-Currently, all toolboxes per environment are located under the `toolbox`
-folder. If you wish to do a new toolbox environment, just simply add your
-`<environment>.Containerfile` inside that folder, and you're ready to go (separated by environment, language and application).
+## CLI tools
 
-As default, all images use as base the `default.Containerfile`, or
-`quay.io/toolbox-dev/default:latest` to keep them up-to-date when a new pipeline
-build is triggered.
+- `tdx-apply` -- apply your configuration (runs Ansible)
+- `tdx-edit` -- open config in your `$EDITOR`
+- `tdx-upgrade` -- upgrade to the latest container image
 
 ## Building locally
 
-To build the images locally, one must need to install
-[podman](https://podman.io/), once podman is installed, just run the following:
-
 ```bash
-# To generate the default image
-make default
-
-# To generate the python image
-make languages/python
-
-# To generate an application toolbox
-make applications/vscode
+make build
 ```
 
-A list of targets can be seen at `make targets`.
+## Documentation
 
-## Making use of the toolbox images
-
-In order to use any of the boxes provided by this repository, you can just do:
-
-```bash
-# For creating a python box
-toolbox create --image quay.io/toolbox-dev/languages/python python-dev
-toolbox create --image quay.io/toolbox-dev/applications/vscode vscode
-```
-
-And the same applies for all images shipped in this repository. That will pick
-whatever is in quay and pull the latest data.
+Full documentation is available at the [project docs site](https://r0x0d.github.io/toolbox-dev/).

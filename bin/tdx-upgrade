@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [ ! -r /run/.containerenv ] || [ ! -r /run/.toolboxenv ]; then
+    echo "Error: tdx-upgrade can only be run from within a toolbox container." >&2
+    exit 1
+fi
+
+# Read container metadata
+# shellcheck source=/dev/null
+source /run/.containerenv
+toolbox_name="${name:?}"
+toolbox_image="${image:?}"
+
+if ! /usr/bin/podman-remote ps --quiet >/dev/null 2>&1; then
+    echo "Error: podman socket is not available on the host." >&2
+    echo "Run on the host: systemctl --user enable --now podman.socket" >&2
+    exit 1
+fi
+
+echo "Checking for updates to $toolbox_image..."
+
+local_digest=$(/usr/bin/podman-remote inspect "$toolbox_name" | /usr/bin/jq -r ".[0].ImageDigest")
+remote_digest=$(/usr/bin/skopeo inspect "docker://$toolbox_image" | /usr/bin/jq -r .Digest)
+
+if [ "$local_digest" = "$remote_digest" ]; then
+    echo "Already running the latest image. No upgrade needed."
+    exit 0
+fi
+
+echo "A newer image is available. Upgrading..."
+/usr/bin/podman-remote pull "$toolbox_image"
+
+# Capture installed RPMs to restore user-installed packages
+installed_rpms=$(/usr/bin/rpm --all --query --queryformat "%{NAME}\n")
+
+# Rename current container as backup
+toolbox_backup="${toolbox_name}_$(date +%Y-%m-%d-%H%M%S)"
+echo "Renaming current container to $toolbox_backup..."
+/usr/bin/podman-remote rename "$toolbox_name" "$toolbox_backup"
+
+# Create new container from latest image
+echo "Creating new container..."
+/usr/bin/toolbox create --image "$toolbox_image" "$toolbox_name"
+
+# Re-install packages from previous container
+echo "Restoring packages..."
+/usr/bin/toolbox run --container "$toolbox_name" \
+    sudo /usr/bin/dnf install --assumeyes --skip-broken --skip-unavailable "$installed_rpms"
+
+echo "Upgrade complete. Entering new container..."
+/usr/bin/toolbox enter "$toolbox_name"

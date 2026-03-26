@@ -1,3 +1,4 @@
+---
 name: Build & Push Image
 
 env:
@@ -85,9 +86,14 @@ jobs:
         run: podman load -i /tmp/image/${{ steps.artifact.outputs.tarball }}
 
       - name: Download malicious package scripts
+        env:
+          BASE_URL: >-
+            https://raw.githubusercontent.com/Red-Hat-Information-Security/Incident-Response/main
         run: |
-          curl -sSL https://raw.githubusercontent.com/Red-Hat-Information-Security/Incident-Response/main/npm-malicious-package-check.py -o /tmp/npm-malicious-package-check.py
-          curl -sSL https://raw.githubusercontent.com/Red-Hat-Information-Security/Incident-Response/main/shai-hulud-package-check.py -o /tmp/shai-hulud-package-check.py
+          curl -sSL "$BASE_URL/npm-malicious-package-check.py" \
+            -o /tmp/npm-malicious-package-check.py
+          curl -sSL "$BASE_URL/shai-hulud-package-check.py" \
+            -o /tmp/shai-hulud-package-check.py
 
       - name: Run malicious package scan
         run: |
@@ -96,7 +102,8 @@ jobs:
             -v /tmp/shai-hulud-package-check.py:/tmp/shai-hulud-package-check.py:ro \
             localhost/${{ inputs.image }}:latest \
             bash -c "
-              pip install --quiet requests pyyaml 2>/dev/null || dnf install -y python3-requests python3-pyyaml 2>/dev/null || true
+              pip install --quiet requests pyyaml 2>/dev/null || \
+                dnf install -y python3-requests python3-pyyaml 2>/dev/null || true
               echo '=== Running npm malicious package checker ==='
               python3 /tmp/npm-malicious-package-check.py
               echo '=== Running Shai-Hulud package checker ==='
@@ -180,6 +187,20 @@ jobs:
             fi
           "
 
+      - name: Test Ansible playbook (dry run)
+        run: |
+          echo "=== Testing Ansible playbook ==="
+          podman run --rm localhost/${{ inputs.image }}:latest bash -c "
+            cat > /tmp/test-config.yml <<EOF
+          languages:
+            python_development: true
+            go_development: true
+          EOF
+            sudo ansible-playbook /usr/share/toolbox-dev/ansible/playbook.yml \
+              --extra-vars '@/tmp/test-config.yml' \
+              --check
+          "
+
   push:
     name: Push
     runs-on: ubuntu-latest
@@ -232,7 +253,8 @@ jobs:
 
       - name: Sign image
         run: |
-          cosign sign -y --key env://COSIGN_PRIVATE_KEY ${{ env.REGISTRY }}/${{ inputs.image }}@${{ steps.push.outputs.digest }}
+          cosign sign -y --key env://COSIGN_PRIVATE_KEY \
+            ${{ env.REGISTRY }}/${{ inputs.image }}@${{ steps.push.outputs.digest }}
         env:
           COSIGN_EXPERIMENTAL: "false"
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}

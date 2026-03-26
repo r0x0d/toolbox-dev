@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+TDX_CONFIG="${TDX_CONFIG:-$HOME/.config/toolbox-dev/config.yml}"
+TDX_ANSIBLE="/usr/share/toolbox-dev/ansible"
+TDX_STAMP="$HOME/.config/toolbox-dev/.last-applied"
+
+if [ ! -f "$TDX_CONFIG" ]; then
+    echo "No config found at $TDX_CONFIG"
+    echo "Creating default config..."
+    mkdir -p "$(dirname "$TDX_CONFIG")"
+    cp /usr/share/toolbox-dev/defaults.yml "$TDX_CONFIG"
+    echo "Edit with: tdx-edit"
+    exit 0
+fi
+
+echo "Applying toolbox-dev configuration..."
+sudo ansible-playbook \
+    "$TDX_ANSIBLE/playbook.yml" \
+    --extra-vars "@$TDX_CONFIG" \
+    "$@"
+
+date -Iseconds > "$TDX_STAMP"
+echo "Configuration applied successfully."

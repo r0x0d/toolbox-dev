@@ -1,0 +1,52 @@
+---
+- name: Install pyenv build dependencies
+  ansible.builtin.dnf:
+    name:
+      - patch
+      - zlib-devel
+      - bzip2
+      - bzip2-devel
+      - readline-devel
+      - sqlite
+      - sqlite-devel
+      - tk-devel
+      - libffi-devel
+      - xz-devel
+      - libuuid-devel
+      - gdbm-libs
+      - libnsl2
+    state: present
+  when: languages.python_development | default(false) | bool
+
+- name: Install Python development packages
+  ansible.builtin.dnf:
+    name:
+      - python3-devel
+      - python3-pip
+      - yamllint
+      - ruff
+      - pre-commit
+    state: present
+  when: languages.python_development | default(false) | bool
+
+- name: Install pyright
+  ansible.builtin.pip:
+    name: pyright==1.1.407
+    state: present
+  when: languages.python_development | default(false) | bool
+
+- name: Create wrapper scripts
+  ansible.builtin.template:
+    src: "{{ playbook_dir }}/templates/bin-wrapper.sh.j2"
+    dest: "{{ tdx_user_bin }}/{{ item }}"
+    owner: "{{ tdx_user }}"
+    mode: "0755"
+  loop: "{{ python_development_binaries }}"
+  when: languages.python_development | default(false) | bool
+
+- name: Remove wrapper scripts
+  ansible.builtin.file:
+    path: "{{ tdx_user_bin }}/{{ item }}"
+    state: absent
+  loop: "{{ python_development_binaries }}"
+  when: not (languages.python_development | default(false) | bool)

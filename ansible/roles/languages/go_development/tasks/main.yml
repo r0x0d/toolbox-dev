@@ -1,0 +1,22 @@
+---
+- name: Install Go
+  ansible.builtin.dnf:
+    name: go
+    state: present
+  when: languages.go_development | default(false) | bool
+
+- name: Create wrapper scripts
+  ansible.builtin.template:
+    src: "{{ playbook_dir }}/templates/bin-wrapper.sh.j2"
+    dest: "{{ tdx_user_bin }}/{{ item }}"
+    owner: "{{ tdx_user }}"
+    mode: "0755"
+  loop: "{{ go_development_binaries }}"
+  when: languages.go_development | default(false) | bool
+
+- name: Remove wrapper scripts
+  ansible.builtin.file:
+    path: "{{ tdx_user_bin }}/{{ item }}"
+    state: absent
+  loop: "{{ go_development_binaries }}"
+  when: not (languages.go_development | default(false) | bool)

@@ -1,0 +1,4 @@
+---
+go_development_binaries:
+  - go
+  - gofmt

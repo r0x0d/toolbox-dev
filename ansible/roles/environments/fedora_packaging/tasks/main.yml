@@ -1,0 +1,47 @@
+---
+- name: Install Fedora packaging tools
+  ansible.builtin.dnf:
+    name:
+      - fedpkg
+      - packit
+      - copr
+      - copr-rpmbuild
+      - rust2rpm
+      - go2rpm
+      - cargo2rpm
+      - pyp2spec
+      - rubygem-gem2rpm
+      - patch
+      - tomcli
+      - python3-pip
+      - xxd
+      - pyproject-rpm-macros
+      - cargo-rpm-macros
+    state: present
+  when: environments.fedora_packaging | default(false) | bool
+
+- name: Install Python packaging tools
+  ansible.builtin.pip:
+    name:
+      - woolly
+      - fuzzytail
+      - cookiecutter
+      - jinja2_time
+    state: present
+  when: environments.fedora_packaging | default(false) | bool
+
+- name: Create wrapper scripts
+  ansible.builtin.template:
+    src: "{{ playbook_dir }}/templates/bin-wrapper.sh.j2"
+    dest: "{{ tdx_user_bin }}/{{ item }}"
+    owner: "{{ tdx_user }}"
+    mode: "0755"
+  loop: "{{ fedora_packaging_binaries }}"
+  when: environments.fedora_packaging | default(false) | bool
+
+- name: Remove wrapper scripts
+  ansible.builtin.file:
+    path: "{{ tdx_user_bin }}/{{ item }}"
+    state: absent
+  loop: "{{ fedora_packaging_binaries }}"
+  when: not (environments.fedora_packaging | default(false) | bool)

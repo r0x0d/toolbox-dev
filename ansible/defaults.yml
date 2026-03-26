@@ -1,0 +1,16 @@
+---
+# toolbox-dev configuration
+# Copy to ~/.config/toolbox-dev/config.yml and enable desired roles.
+
+languages:
+  python_development: false
+  nodejs_development: false
+  go_development: false
+  rust_development: false
+  cpp_development: false
+  ruby_development: false
+  dotnet_development: false
+  zig_development: false
+
+environments:
+  fedora_packaging: false

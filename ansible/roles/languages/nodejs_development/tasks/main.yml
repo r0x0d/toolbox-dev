@@ -1,0 +1,36 @@
+---
+- name: Install Node.js
+  ansible.builtin.dnf:
+    name: nodejs
+    state: present
+  when: languages.nodejs_development | default(false) | bool
+
+- name: Install pnpm
+  community.general.npm:
+    name: pnpm
+    global: true
+    state: latest
+  when: languages.nodejs_development | default(false) | bool
+
+- name: Install yarn
+  community.general.npm:
+    name: yarn
+    global: true
+    state: latest
+  when: languages.nodejs_development | default(false) | bool
+
+- name: Create wrapper scripts
+  ansible.builtin.template:
+    src: "{{ playbook_dir }}/templates/bin-wrapper.sh.j2"
+    dest: "{{ tdx_user_bin }}/{{ item }}"
+    owner: "{{ tdx_user }}"
+    mode: "0755"
+  loop: "{{ nodejs_development_binaries }}"
+  when: languages.nodejs_development | default(false) | bool
+
+- name: Remove wrapper scripts
+  ansible.builtin.file:
+    path: "{{ tdx_user_bin }}/{{ item }}"
+    state: absent
+  loop: "{{ nodejs_development_binaries }}"
+  when: not (languages.nodejs_development | default(false) | bool)

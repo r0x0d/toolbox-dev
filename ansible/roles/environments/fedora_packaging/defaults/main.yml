@@ -1,0 +1,9 @@
+---
+fedora_packaging_binaries:
+  - fedpkg
+  - packit
+  - copr
+  - rust2rpm
+  - go2rpm
+  - cargo2rpm
+  - pyp2spec

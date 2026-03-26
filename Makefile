@@ -1,12 +1,20 @@
-IMAGES := $(patsubst toolbox/%,%,$(basename $(wildcard toolbox/*.Containerfile toolbox/**/*.Containerfile)))
-
 default: help
 
-.PHONY: $(IMAGES)
-$(IMAGES): ## Build a image
-	podman build --pull --rm -f "toolbox/$@.Containerfile" -t "local/toolbox-$@" .
+.PHONY: build
+build: ## Build the toolbox image
+	podman build --pull --rm -f Containerfile -t local/toolbox-dev .
 
-.PHONY: targets
-targets:
-	$(foreach img,$(IMAGES),$(info $(img)))
-	@echo "Total: $(words $(IMAGES)) images"
+.PHONY: test
+test: build ## Build and test with a sample config
+	podman run --rm local/toolbox-dev bash -c \
+		"printf 'languages:\n  python_development: true\n  go_development: true\n' > /tmp/test.yml && \
+		sudo ansible-playbook /usr/share/toolbox-dev/ansible/playbook.yml \
+			--extra-vars '@/tmp/test.yml'"
+
+.PHONY: docs
+docs: ## Serve documentation locally
+	mkdocs serve
+
+.PHONY: help
+help: ## Show this help
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'

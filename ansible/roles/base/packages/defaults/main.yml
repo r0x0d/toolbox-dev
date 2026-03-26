@@ -1,0 +1,20 @@
+---
+base_packages:
+  - asciinema
+  - fd-find
+  - task
+  - fish
+  - shfmt
+  - fzf
+  - git-credential-libsecret
+  - jq
+  - make
+  - ripgrep
+  - neovim
+  - openssl-devel
+  - g++
+  - gcc
+  - zstd
+  - strace
+  - ksshaskpass
+  - git-lfs

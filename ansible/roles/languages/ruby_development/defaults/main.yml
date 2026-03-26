@@ -1,0 +1,5 @@
+---
+ruby_development_binaries:
+  - ruby
+  - gem
+  - irb

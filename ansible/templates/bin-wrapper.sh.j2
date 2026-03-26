@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+COMMAND=$(basename "$0")
+CONTAINER_ENV_PATH="/run/.containerenv"
+
+if [[ -f "$CONTAINER_ENV_PATH" ]]; then
+    /usr/bin/"$COMMAND" "$@"
+else
+    toolbox run --container {{ tdx_container_name }} /usr/bin/"$COMMAND" "$@"
+fi

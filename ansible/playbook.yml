@@ -1,0 +1,67 @@
+---
+- name: Configure toolbox-dev environment
+  hosts: localhost
+  connection: local
+  become: true
+
+  vars_files:
+    - defaults.yml
+
+  pre_tasks:
+    - name: Load user configuration
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'TDX_CONFIG') }}"
+      when: lookup('env', 'TDX_CONFIG') | length > 0
+
+    - name: Detect real user
+      ansible.builtin.set_fact:
+        tdx_user: "{{ lookup('env', 'SUDO_USER') | default(ansible_env.USER) }}"
+
+    - name: Get user home directory
+      ansible.builtin.shell:
+        cmd: "set -o pipefail && getent passwd {{ tdx_user }} | cut -d: -f6"
+      register: _user_home
+      changed_when: false
+
+    - name: Set user paths
+      ansible.builtin.set_fact:
+        tdx_user_home: "{{ _user_home.stdout }}"
+        tdx_user_bin: "{{ _user_home.stdout }}/.local/bin"
+
+    - name: Read container name from containerenv
+      ansible.builtin.shell: "bash -c 'source /run/.containerenv 2>/dev/null && echo $name'"
+      register: _container_name
+      changed_when: false
+      ignore_errors: true
+
+    - name: Set container name
+      ansible.builtin.set_fact:
+        tdx_container_name: >-
+          {{ lookup('env', 'TDX_CONTAINER_NAME') |
+             default(_container_name.stdout |
+             default('toolbox-dev'), true) }}
+
+    - name: Ensure user bin directory exists
+      ansible.builtin.file:
+        path: "{{ tdx_user_bin }}"
+        state: directory
+        owner: "{{ tdx_user }}"
+        mode: "0755"
+
+  roles:
+    # Base (always run)
+    - role: base/packages
+    - role: base/host_runner
+
+    # Languages
+    - role: languages/python_development
+    - role: languages/nodejs_development
+    - role: languages/go_development
+    - role: languages/rust_development
+    - role: languages/cpp_development
+    - role: languages/ruby_development
+    - role: languages/dotnet_development
+    - role: languages/zig_development
+
+    # Environments
+    - role: environments/fedora_packaging

@@ -1,0 +1,53 @@
+---
+site_name: toolbox-dev
+site_description: A configurable development toolbox container with Ansible roles
+repo_url: https://github.com/r0x0d/toolbox-dev
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  features:
+    - content.code.copy
+    - content.tabs.link
+    - navigation.sections
+    - navigation.expand
+    - search.suggest
+  palette:
+    - scheme: default
+      primary: blue grey
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: blue grey
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Configuration: configuration.md
+  - Upgrading: upgrade.md
+  - Adding New Roles: contributing-roles.md
+  - Roles:
+      - Overview: roles/index.md
+      - Python: roles/python.md
+      - Node.js: roles/node.md
+      - Go: roles/go.md
+      - Rust: roles/rust.md
+      - C++: roles/cpp.md
+      - Ruby: roles/ruby.md
+      - .NET: roles/dotnet.md
+      - Zig: roles/zig.md
+      - Fedora Packaging: roles/fedora-packaging.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: true
