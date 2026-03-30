@@ -25,4 +25,5 @@ jobs:
       context: .
       image: toolbox-dev
       containerfile: Containerfile
+      push: ${{ secrets.BOT_USERNAME != '' && secrets.BOT_SECRET != '' }}
     secrets: inherit
