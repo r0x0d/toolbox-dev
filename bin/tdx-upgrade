@@ -1,6 +1,25 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+keep_backup=false
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --keep-backup|-k)
+            keep_backup=true
+            shift
+            ;;
+        -h|--help)
+            echo "Usage: tdx-upgrade [--keep-backup|-k]"
+            echo "  --keep-backup, -k  Preserve the old backup container after upgrade"
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $1" >&2
+            exit 1
+            ;;
+    esac
+done
+
 if [ ! -r /run/.containerenv ] || [ ! -r /run/.toolboxenv ]; then
     echo "Error: tdx-upgrade can only be run from within a toolbox container." >&2
     exit 1
@@ -31,9 +50,6 @@ fi
 echo "A newer image is available. Upgrading..."
 /usr/bin/podman-remote pull "$toolbox_image"
 
-# Capture installed RPMs to restore user-installed packages
-installed_rpms=$(/usr/bin/rpm --all --query --queryformat "%{NAME}\n")
-
 # Rename current container as backup
 toolbox_backup="${toolbox_name}_$(date +%Y-%m-%d-%H%M%S)"
 echo "Renaming current container to $toolbox_backup..."
@@ -43,10 +59,12 @@ echo "Renaming current container to $toolbox_backup..."
 echo "Creating new container..."
 /usr/bin/toolbox create --image "$toolbox_image" "$toolbox_name"
 
-# Re-install packages from previous container
-echo "Restoring packages..."
-/usr/bin/toolbox run --container "$toolbox_name" \
-    sudo /usr/bin/dnf install --assumeyes --skip-broken --skip-unavailable "$installed_rpms"
-
 echo "Upgrade complete. Entering new container..."
 /usr/bin/toolbox enter "$toolbox_name"
+
+# Remove old container unless --keep-backup was specified
+if [ "$keep_backup" = true ]; then
+    echo "Backup container preserved as $toolbox_backup"
+else
+    /usr/bin/toolbox rm "$toolbox_backup" --force
+fi
