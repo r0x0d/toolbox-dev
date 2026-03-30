@@ -4,7 +4,7 @@ RUN sed -i "s/enabled=1/enabled=0/" "/etc/yum.repos.d/fedora-cisco-openh264.repo
     && echo "fastestmirror=true" >> /etc/dnf/dnf.conf \
     && echo "max_parallel_downloads=20" >> /etc/dnf/dnf.conf
 
-RUN dnf install -y --nodocs ansible-core python3-pip \
+RUN dnf install -y --nodocs ansible-core jq podman-remote python3-pip \
     && dnf clean all
 
 RUN HOME=/root ansible-galaxy collection install community.general
