@@ -21,3 +21,4 @@ jobs:
       context: .
       image: toolbox-dev
       containerfile: Containerfile
+      push: false
