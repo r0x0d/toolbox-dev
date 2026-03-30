@@ -141,7 +141,34 @@ jobs:
               python3 /tmp/shai-hulud-package-check.py
             "
 
-      - name: Push image
+      - name: Configure sigstore attachments
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: |
+          sudo mkdir -p /etc/containers/registries.d
+          sudo tee /etc/containers/registries.d/quay.io-toolbox-dev.yaml > /dev/null <<'EOF'
+          docker:
+            quay.io/toolbox-dev:
+              use-sigstore-attachments: true
+          EOF
+
+      - name: Write signing key
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: |
+          echo "$COSIGN_PRIVATE_KEY" > /tmp/cosign.key
+          echo "$COSIGN_PASSWORD" > /tmp/cosign.pass
+        env:
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+
+      - name: Login to registry
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.BOT_USERNAME }}
+          password: ${{ secrets.BOT_SECRET }}
+
+      - name: Push and sign image
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # v2
         id: push
@@ -155,25 +182,9 @@ jobs:
             --format=oci
             --compression-format=zstd:chunked
             --compression-level=19
+            --sign-by-sigstore-private-key=/tmp/cosign.key
+            --sign-passphrase-file=/tmp/cosign.pass
 
-      - name: Login to registry
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ secrets.BOT_USERNAME }}
-          password: ${{ secrets.BOT_SECRET }}
-          auth_file_path: /tmp/auth.json
-
-      - uses: sigstore/cosign-installer@cad07c2e89fa2edd6e2d7bab4c1aa38e53f76003 # v4.1.1
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-
-      - name: Sign image
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        run: |
-          cosign sign -y --key env://COSIGN_PRIVATE_KEY \
-            ${{ env.REGISTRY }}/${{ env.IMAGE }}@${{ steps.push.outputs.digest }}
-        env:
-          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-          COSIGN_REFERRER_MODE: tag
+      - name: Clean up signing key
+        if: always()
+        run: rm -f /tmp/cosign.key /tmp/cosign.pass
