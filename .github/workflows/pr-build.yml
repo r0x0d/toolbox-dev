@@ -1,0 +1,23 @@
+---
+name: PR Build & Test
+
+on:
+  pull_request:
+    paths:
+      - 'Containerfile'
+      - 'ansible/**'
+      - 'hack/**'
+      - 'bin/**'
+      - '.github/workflows/**'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build Dev Toolbox
+    uses: ./.github/workflows/build-image.yml
+    with:
+      context: .
+      image: toolbox-dev
+      containerfile: Containerfile
