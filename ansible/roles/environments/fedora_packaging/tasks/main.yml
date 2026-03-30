@@ -4,7 +4,7 @@
     name:
       - fedpkg
       - packit
-      - copr
+      - copr-cli
       - copr-rpmbuild
       - rust2rpm
       - go2rpm
