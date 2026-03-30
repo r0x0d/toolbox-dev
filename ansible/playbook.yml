@@ -15,7 +15,7 @@
 
     - name: Detect real user
       ansible.builtin.set_fact:
-        tdx_user: "{{ lookup('env', 'SUDO_USER') | default(ansible_env.USER) }}"
+        tdx_user: "{{ lookup('env', 'SUDO_USER') | default(ansible_facts.env.USER) }}"
 
     - name: Get user home directory
       ansible.builtin.shell:

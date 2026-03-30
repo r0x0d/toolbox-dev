@@ -1,6 +1,5 @@
 ---
 host_runner_binaries:
-  - rpm-ostree
   - flatpak
   - systemctl
   - podman
@@ -10,3 +9,4 @@ host_runner_binaries:
   - gh
   - skopeo
   - clamav
+  - cosign
