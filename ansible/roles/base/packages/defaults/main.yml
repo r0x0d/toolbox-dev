@@ -1,4 +1,14 @@
 ---
+base_binaries:
+  - asciinema
+  - fd
+  - task
+  - jq
+  - make
+  - rg
+  - strace
+  - vimx
+
 base_packages:
   - asciinema
   - fd-find
