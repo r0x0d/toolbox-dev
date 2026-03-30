@@ -1,0 +1,180 @@
+---
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'Containerfile'
+      - 'ansible/**'
+      - 'hack/**'
+      - 'bin/**'
+      - '.github/workflows/**'
+  pull_request:
+    paths:
+      - 'Containerfile'
+      - 'ansible/**'
+      - 'hack/**'
+      - 'bin/**'
+      - '.github/workflows/**'
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+env:
+  REGISTRY: "quay.io/toolbox-dev"
+  IMAGE: toolbox-dev
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
+
+      - name: Build image
+        uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2
+        with:
+          context: .
+          image: ${{ env.IMAGE }}
+          tags: latest ${{ github.sha }}
+          containerfiles: Containerfile
+          layers: true
+          oci: true
+
+      - name: Test container starts successfully
+        run: |
+          echo "=== Testing container can start ==="
+          podman run --rm localhost/${{ env.IMAGE }}:latest echo "Container started successfully"
+
+      - name: Test shell availability
+        run: |
+          echo "=== Testing shell availability ==="
+          podman run --rm localhost/${{ env.IMAGE }}:latest bash -c "echo 'Bash is available'"
+          podman run --rm localhost/${{ env.IMAGE }}:latest sh -c "echo 'Shell is available'"
+
+      - name: Test basic system commands
+        run: |
+          echo "=== Testing basic system commands ==="
+          podman run --rm localhost/${{ env.IMAGE }}:latest bash -c "
+            set -e
+            echo 'Testing: whoami'
+            whoami
+            echo 'Testing: pwd'
+            pwd
+            echo 'Testing: ls'
+            ls -la /
+            echo 'Testing: cat /etc/os-release'
+            cat /etc/os-release
+            echo 'All basic system commands passed!'
+          "
+
+      - name: Test network utilities
+        run: |
+          echo "=== Testing network utilities ==="
+          podman run --rm localhost/${{ env.IMAGE }}:latest bash -c "
+            set -e
+            echo 'Testing: curl'
+            curl --version || echo 'curl not installed (optional)'
+            echo 'Testing: ping availability'
+            which ping || echo 'ping not installed (optional)'
+            echo 'Network utilities check complete!'
+          "
+
+      - name: Test package manager
+        run: |
+          echo "=== Testing package manager ==="
+          podman run --rm localhost/${{ env.IMAGE }}:latest bash -c "
+            if command -v dnf &> /dev/null; then
+              echo 'DNF is available'
+              dnf --version
+            elif command -v apt &> /dev/null; then
+              echo 'APT is available'
+              apt --version
+            else
+              echo 'No known package manager found'
+            fi
+          "
+
+      - name: Test Ansible playbook (dry run)
+        run: |
+          echo "=== Testing Ansible playbook ==="
+          podman run --rm localhost/${{ env.IMAGE }}:latest bash -c "
+            cat > /tmp/test-config.yml <<EOF
+          languages:
+            python_development: true
+            go_development: true
+          EOF
+            sudo ansible-playbook /usr/share/toolbox-dev/ansible/playbook.yml \
+              --extra-vars '@/tmp/test-config.yml' \
+              --check
+          "
+
+      - name: Download malicious package scripts
+        env:
+          BASE_URL: >-
+            https://raw.githubusercontent.com/Red-Hat-Information-Security/Incident-Response/main
+        run: |
+          curl -sSL "$BASE_URL/npm-malicious-package-check.py" \
+            -o /tmp/npm-malicious-package-check.py
+          curl -sSL "$BASE_URL/shai-hulud-package-check.py" \
+            -o /tmp/shai-hulud-package-check.py
+
+      - name: Run malicious package scan
+        run: |
+          podman run --rm \
+            -v /tmp/npm-malicious-package-check.py:/tmp/npm-malicious-package-check.py:ro \
+            -v /tmp/shai-hulud-package-check.py:/tmp/shai-hulud-package-check.py:ro \
+            localhost/${{ env.IMAGE }}:latest \
+            bash -c "
+              pip install --quiet requests pyyaml 2>/dev/null || \
+                dnf install -y python3-requests python3-pyyaml 2>/dev/null || true
+              echo '=== Running npm malicious package checker ==='
+              python3 /tmp/npm-malicious-package-check.py
+              echo '=== Running Shai-Hulud package checker ==='
+              python3 /tmp/shai-hulud-package-check.py
+            "
+
+      - name: Push image
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # v2
+        id: push
+        with:
+          username: ${{ secrets.BOT_USERNAME }}
+          password: ${{ secrets.BOT_SECRET }}
+          image: ${{ env.IMAGE }}
+          registry: ${{ env.REGISTRY }}
+          tags: latest ${{ github.sha }}
+          extra-args: |
+            --format=oci
+            --compression-format=zstd:chunked
+            --compression-level=19
+
+      - name: Login to registry
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.BOT_USERNAME }}
+          password: ${{ secrets.BOT_SECRET }}
+          auth_file_path: /tmp/auth.json
+
+      - uses: sigstore/cosign-installer@cad07c2e89fa2edd6e2d7bab4c1aa38e53f76003 # v4.1.1
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+
+      - name: Sign image
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: |
+          cosign sign -y --key env://COSIGN_PRIVATE_KEY \
+            ${{ env.REGISTRY }}/${{ env.IMAGE }}@${{ steps.push.outputs.digest }}
+        env:
+          COSIGN_EXPERIMENTAL: "false"
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          COSIGN_REGISTRY_REFERRERS_MODE: oci-1-1-fallback
