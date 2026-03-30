@@ -29,6 +29,7 @@ nav:
   - Getting Started: getting-started.md
   - Configuration: configuration.md
   - Upgrading: upgrade.md
+  - Custom Playbooks: custom-playbooks.md
   - Adding New Roles: contributing-roles.md
   - Roles:
       - Overview: roles/index.md

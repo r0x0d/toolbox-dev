@@ -32,6 +32,9 @@ languages:
 environments:
   fedora_packaging: false
 
+# Optional: paths to custom Ansible task files
+custom_playbooks:
+  - ~/.config/toolbox-dev/playbooks/my-tools.yml
 ```
 
 Set a role to `true` to enable it, `false` to disable it.
@@ -85,6 +88,11 @@ For example, enabling `python_development` creates wrappers for `python3`, `pip3
 
 The container name is auto-detected from `/run/.containerenv`.
 You can override it with the `TDX_CONTAINER_NAME` environment variable.
+
+## Custom playbooks
+
+You can run your own Ansible task files by listing them under `custom_playbooks`
+in your config. See [Custom Playbooks](custom-playbooks.md) for details.
 
 ## Disabling a role
 

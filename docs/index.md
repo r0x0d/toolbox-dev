@@ -135,5 +135,7 @@ Override the target container name with:
 export TDX_CONTAINER_NAME=my-dev
 ```
 
-See [Getting Started](getting-started.md) for detailed setup instructions and
-[Configuration](configuration.md) for the full reference.
+See [Getting Started](getting-started.md) for detailed setup instructions,
+[Configuration](configuration.md) for the full reference, and
+[Custom Playbooks](custom-playbooks.md) to extend toolbox-dev with your own
+Ansible tasks.

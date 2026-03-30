@@ -14,3 +14,9 @@ languages:
 
 environments:
   fedora_packaging: false
+
+# Custom playbooks to include (list of paths to task files)
+# Example:
+#   custom_playbooks:
+#     - ~/.config/toolbox-dev/playbooks/my-setup.yml
+custom_playbooks: []

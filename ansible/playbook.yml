@@ -65,3 +65,9 @@
 
     # Environments
     - role: environments/fedora_packaging
+
+  post_tasks:
+    - name: Include custom playbooks
+      ansible.builtin.include_tasks:
+        file: "{{ item }}"
+      loop: "{{ custom_playbooks | default([]) }}"
