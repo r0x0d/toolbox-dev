@@ -43,4 +43,97 @@ tdx-edit    # enable desired languages
 tdx-apply   # install them
 ```
 
-See [Getting Started](getting-started.md) for detailed instructions.
+## Usage examples
+
+### Single language setup
+
+Enable just Python for scripting or data work:
+
+```yaml
+languages:
+  python_development: true
+```
+
+```bash
+tdx-apply
+python3 --version
+pip3 install requests
+```
+
+### Full-stack web development
+
+Enable multiple languages for a typical web project:
+
+```yaml
+languages:
+  python_development: true
+  nodejs_development: true
+  rust_development: true
+```
+
+After running `tdx-apply`, tools like `python3`, `node`, `pnpm`, `cargo`, and `rustc` are all available in the same container.
+
+### Fedora package maintainer
+
+Combine language tooling with the packaging environment:
+
+```yaml
+languages:
+  python_development: true
+  go_development: true
+
+environments:
+  fedora_packaging: true
+```
+
+This gives you `fedpkg`, `mock`, `rpmlint`, and `packit` alongside your
+development tools.
+
+## Configuration
+
+### Config file
+
+The config file lives at `~/.config/toolbox-dev/config.yml`. Use `tdx-edit` to
+open it in your `$EDITOR`, or edit it directly.
+
+To use a custom path:
+
+```bash
+export TDX_CONFIG=~/my-custom-config.yml
+```
+
+### CLI tools
+
+| Command | Description |
+|---------|-------------|
+| `tdx-edit` | Open the config file in your editor |
+| `tdx-apply` | Apply the current configuration |
+| `tdx-apply -v` | Apply with verbose Ansible output |
+| `tdx-apply --check` | Dry run -- show what would change without applying |
+| `tdx-upgrade` | Upgrade the container to the latest image |
+
+### Auto-apply on entry
+
+When you enter the container, toolbox-dev automatically detects config changes
+and runs `tdx-apply` for you. No need to remember to apply after editing.
+
+### Host wrapper scripts
+
+Enabled roles install wrapper scripts in `~/.local/bin/` so you can call tools
+directly from the host without entering the container first:
+
+```bash
+# These work from the host -- they transparently run inside the container
+python3 myscript.py
+ruff check .
+cargo build
+```
+
+Override the target container name with:
+
+```bash
+export TDX_CONTAINER_NAME=my-dev
+```
+
+See [Getting Started](getting-started.md) for detailed setup instructions and
+[Configuration](configuration.md) for the full reference.
