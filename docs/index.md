@@ -18,7 +18,7 @@ roles that you enable or disable via a simple YAML config file.
 ### Languages
 
 | Role | Config key | Description |
-|------|-----------|-------------|
+| ---- | ---------- | ----------- |
 | [Python](roles/python.md) | `languages.python_development` | Python 3, pip, ruff, pre-commit, pyright, pyenv dependencies |
 | [Node.js](roles/node.md) | `languages.nodejs_development` | Node.js, pnpm, yarn |
 | [Go](roles/go.md) | `languages.go_development` | Go compiler |
@@ -31,7 +31,7 @@ roles that you enable or disable via a simple YAML config file.
 ### Environments
 
 | Role | Config key | Description |
-|------|-----------|-------------|
+| ---- | ---------- | ----------- |
 | [Fedora Packaging](roles/fedora-packaging.md) | `environments.fedora_packaging` | fedpkg, packit, COPR, conversion tools |
 
 ## Quick start
@@ -105,7 +105,7 @@ export TDX_CONFIG=~/my-custom-config.yml
 ### CLI tools
 
 | Command | Description |
-|---------|-------------|
+| ------- | ----------- |
 | `tdx-edit` | Open the config file in your editor |
 | `tdx-apply` | Apply the current configuration |
 | `tdx-apply -v` | Apply with verbose Ansible output |

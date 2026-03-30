@@ -84,7 +84,8 @@ These wrappers let you call the tools directly from the host -- if you're
 inside the container, they run the binary directly; if you're on the host,
 they transparently execute it inside the container via `toolbox run`.
 
-For example, enabling `python_development` creates wrappers for `python3`, `pip3`, `ruff`, `pre-commit`, `pyright`, and `yamllint`.
+For example, enabling `python_development` creates wrappers for `python3`, `pip3`, `ruff`,
+`pre-commit`, `pyright`, and `yamllint`.
 
 The container name is auto-detected from `/run/.containerenv`.
 You can override it with the `TDX_CONTAINER_NAME` environment variable.
