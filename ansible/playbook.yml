@@ -69,5 +69,5 @@
   post_tasks:
     - name: Include custom playbooks
       ansible.builtin.include_tasks:
-        file: "{{ item }}"
+        file: "{{ item | regex_replace('^~/', tdx_user_home + '/') }}"
       loop: "{{ custom_playbooks | default([]) }}"
