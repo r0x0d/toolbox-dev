@@ -172,6 +172,7 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         run: |
           cosign sign -y --key env://COSIGN_PRIVATE_KEY \
+            --registry-referrers-mode=legacy \
             ${{ env.REGISTRY }}/${{ env.IMAGE }}@${{ steps.push.outputs.digest }}
         env:
           COSIGN_EXPERIMENTAL: "false"
