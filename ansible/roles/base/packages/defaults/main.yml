@@ -10,7 +10,6 @@ base_packages:
   - jq
   - make
   - ripgrep
-  - neovim
   - openssl-devel
   - g++
   - gcc
@@ -18,3 +17,4 @@ base_packages:
   - strace
   - ksshaskpass
   - git-lfs
+  - vimx
