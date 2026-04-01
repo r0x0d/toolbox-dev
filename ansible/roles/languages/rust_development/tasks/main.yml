@@ -16,18 +16,9 @@
   become_user: "{{ tdx_user }}"
   when: languages.rust_development | default(false) | bool
 
-- name: Create wrapper scripts
-  ansible.builtin.template:
-    src: "{{ playbook_dir }}/templates/bin-wrapper.sh.j2"
-    dest: "{{ tdx_user_bin }}/{{ item }}"
-    owner: "{{ tdx_user }}"
-    mode: "0755"
-  loop: "{{ rust_development_binaries }}"
-  when: languages.rust_development | default(false) | bool
-
-- name: Remove wrapper scripts
-  ansible.builtin.file:
-    path: "{{ tdx_user_bin }}/{{ item }}"
-    state: absent
-  loop: "{{ rust_development_binaries }}"
-  when: not (languages.rust_development | default(false) | bool)
+- name: Manage wrapper scripts
+  ansible.builtin.include_role:
+    name: internal/bin_wrapper
+  vars:
+    bin_wrapper_binaries: "{{ rust_development_binaries }}"
+    bin_wrapper_enabled: "{{ languages.rust_development | default(false) | bool }}"

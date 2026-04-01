@@ -1,0 +1,16 @@
+---
+- name: Create wrapper scripts
+  ansible.builtin.template:
+    src: bin-wrapper.sh.j2
+    dest: "{{ tdx_user_bin }}/{{ item }}"
+    owner: "{{ tdx_user }}"
+    mode: "0755"
+  loop: "{{ bin_wrapper_binaries }}"
+  when: bin_wrapper_enabled
+
+- name: Remove wrapper scripts
+  ansible.builtin.file:
+    path: "{{ tdx_user_bin }}/{{ item }}"
+    state: absent
+  loop: "{{ bin_wrapper_binaries }}"
+  when: not bin_wrapper_enabled

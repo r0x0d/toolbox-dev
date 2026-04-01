@@ -58,21 +58,12 @@ a `when:` condition so the role can handle both the enabled
 
 # ... any post-install tasks with the same when condition ...
 
-- name: Create wrapper scripts
-  ansible.builtin.template:
-    src: "{{ playbook_dir }}/templates/bin-wrapper.sh.j2"
-    dest: "{{ tdx_user_bin }}/{{ item }}"
-    owner: "{{ tdx_user }}"
-    mode: "0755"
-  loop: "{{ your_language_development_binaries }}"
-  when: languages.your_language_development | default(false) | bool
-
-- name: Remove wrapper scripts
-  ansible.builtin.file:
-    path: "{{ tdx_user_bin }}/{{ item }}"
-    state: absent
-  loop: "{{ your_language_development_binaries }}"
-  when: not (languages.your_language_development | default(false) | bool)
+- name: Manage wrapper scripts
+  ansible.builtin.include_role:
+    name: internal/bin_wrapper
+  vars:
+    bin_wrapper_binaries: "{{ your_language_development_binaries }}"
+    bin_wrapper_enabled: "{{ languages.your_language_development | default(false) | bool }}"
 ```
 
 ### Tips for writing tasks
@@ -91,7 +82,7 @@ a `when:` condition so the role can handle both the enabled
 - The `community.general` collection is available -- use
   `community.general.npm`, `community.general.gem`, etc. instead of
   raw shell commands when possible
-- The wrapper create/remove blocks must always be the last two task groups
+- The `internal/bin_wrapper` include must always be the last task
 
 ## 4. Register the role in the playbook
 

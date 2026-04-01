@@ -5,18 +5,9 @@
     state: present
   when: languages.go_development | default(false) | bool
 
-- name: Create wrapper scripts
-  ansible.builtin.template:
-    src: "{{ playbook_dir }}/templates/bin-wrapper.sh.j2"
-    dest: "{{ tdx_user_bin }}/{{ item }}"
-    owner: "{{ tdx_user }}"
-    mode: "0755"
-  loop: "{{ go_development_binaries }}"
-  when: languages.go_development | default(false) | bool
-
-- name: Remove wrapper scripts
-  ansible.builtin.file:
-    path: "{{ tdx_user_bin }}/{{ item }}"
-    state: absent
-  loop: "{{ go_development_binaries }}"
-  when: not (languages.go_development | default(false) | bool)
+- name: Manage wrapper scripts
+  ansible.builtin.include_role:
+    name: internal/bin_wrapper
+  vars:
+    bin_wrapper_binaries: "{{ go_development_binaries }}"
+    bin_wrapper_enabled: "{{ languages.go_development | default(false) | bool }}"
