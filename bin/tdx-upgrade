@@ -59,6 +59,14 @@ echo "Renaming current container to $toolbox_backup..."
 echo "Creating new container..."
 /usr/bin/toolbox create --image "$toolbox_image" "$toolbox_name"
 
+# Run tdx-apply before entering so the user's login shell (e.g. fish)
+# is available when toolbox enter tries to use it
+TDX_CONFIG="${TDX_CONFIG:-$HOME/.config/toolbox-dev/config.yml}"
+if [ -f "$TDX_CONFIG" ]; then
+    echo "Applying configuration to new container..."
+    /usr/bin/toolbox run -c "$toolbox_name" tdx-apply
+fi
+
 echo "Upgrade complete. Entering new container..."
 /usr/bin/toolbox enter "$toolbox_name"
 
