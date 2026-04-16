@@ -6,20 +6,20 @@ on:
     branches:
       - main
     paths:
-      - 'Containerfile'
-      - 'ansible/**'
-      - 'hack/**'
-      - 'bin/**'
-      - '.github/workflows/**'
+      - "Containerfile"
+      - "ansible/**"
+      - "hack/**"
+      - "bin/**"
+      - ".github/workflows/**"
   pull_request:
     paths:
-      - 'Containerfile'
-      - 'ansible/**'
-      - 'hack/**'
-      - 'bin/**'
-      - '.github/workflows/**'
+      - "Containerfile"
+      - "ansible/**"
+      - "hack/**"
+      - "bin/**"
+      - ".github/workflows/**"
   schedule:
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * *"
   workflow_dispatch:
 
 env:
@@ -32,11 +32,21 @@ permissions:
 
 jobs:
   build:
-    name: Build
+    name: Build (${{ matrix.arch }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [amd64, arm64]
     steps:
       - name: Checkout repo
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
+
+      - name: Set up QEMU
+        if: matrix.arch != 'amd64'
+        uses: docker/setup-qemu-action@49b3bc8e6bdd4a60e6116a5414239cba5943d3cf # v3
+        with:
+          platforms: ${{ matrix.arch }}
 
       - name: Build image
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2
@@ -47,6 +57,7 @@ jobs:
           containerfiles: Containerfile
           layers: true
           oci: true
+          platforms: linux/${{ matrix.arch }}
 
       - name: Test container starts successfully
         run: |
@@ -121,44 +132,20 @@ jobs:
           BASE_URL: >-
             https://raw.githubusercontent.com/Red-Hat-Information-Security/Incident-Response/main
         run: |
-          curl -sSL "$BASE_URL/npm-malicious-package-check.py" \
-            -o /tmp/npm-malicious-package-check.py
-          curl -sSL "$BASE_URL/shai-hulud-package-check.py" \
-            -o /tmp/shai-hulud-package-check.py
+          curl -sSL "$BASE_URL/ioc-check.py" \
+            -o /tmp/ioc-check.py
 
       - name: Run malicious package scan
         run: |
           podman run --rm \
-            -v /tmp/npm-malicious-package-check.py:/tmp/npm-malicious-package-check.py:ro \
-            -v /tmp/shai-hulud-package-check.py:/tmp/shai-hulud-package-check.py:ro \
+            -v /tmp/ioc-check.py:/tmp/ioc-check.py:ro \
             localhost/${{ env.IMAGE }}:latest \
             bash -c "
               pip install --quiet requests pyyaml 2>/dev/null || \
                 dnf install -y python3-requests python3-pyyaml 2>/dev/null || true
-              echo '=== Running npm malicious package checker ==='
-              python3 /tmp/npm-malicious-package-check.py
-              echo '=== Running Shai-Hulud package checker ==='
-              python3 /tmp/shai-hulud-package-check.py
+              echo '=== Running IOC checker ==='
+              python3 /tmp/ioc-check.py
             "
-
-      - name: Configure sigstore attachments
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        run: |
-          sudo mkdir -p /etc/containers/registries.d
-          sudo tee /etc/containers/registries.d/quay.io-toolbox-dev.yaml > /dev/null <<'EOF'
-          docker:
-            quay.io/toolbox-dev:
-              use-sigstore-attachments: true
-          EOF
-
-      - name: Write signing key
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        run: |
-          echo "$COSIGN_PRIVATE_KEY" > /tmp/cosign.key
-          echo "$COSIGN_PASSWORD" > /tmp/cosign.pass
-        env:
-          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
       - name: Login to registry
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
@@ -168,22 +155,68 @@ jobs:
           username: ${{ secrets.BOT_USERNAME }}
           password: ${{ secrets.BOT_SECRET }}
 
-      - name: Push and sign image
+      - name: Push per-arch image
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # v2
-        id: push
+        run: |
+          podman push \
+            --format=oci \
+            --compression-format=zstd:chunked \
+            --compression-level=19 \
+            localhost/${{ env.IMAGE }}:${{ github.sha }} \
+            docker://${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ github.sha }}-${{ matrix.arch }}
+
+  manifest:
+    name: Create and push multi-arch manifest
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
+
+      - name: Login to registry
+        uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1
         with:
+          registry: ${{ env.REGISTRY }}
           username: ${{ secrets.BOT_USERNAME }}
           password: ${{ secrets.BOT_SECRET }}
-          image: ${{ env.IMAGE }}
-          registry: ${{ env.REGISTRY }}
-          tags: latest ${{ github.sha }}
-          extra-args: |
-            --format=oci
-            --compression-format=zstd:chunked
-            --compression-level=19
-            --sign-by-sigstore-private-key=/tmp/cosign.key
-            --sign-passphrase-file=/tmp/cosign.pass
+
+      - name: Configure sigstore attachments
+        run: |
+          sudo mkdir -p /etc/containers/registries.d
+          sudo tee /etc/containers/registries.d/quay.io-toolbox-dev.yaml > /dev/null <<'EOF'
+          docker:
+            quay.io/toolbox-dev:
+              use-sigstore-attachments: true
+          EOF
+
+      - name: Write signing key
+        run: |
+          echo "$COSIGN_PRIVATE_KEY" > /tmp/cosign.key
+          echo "$COSIGN_PASSWORD" > /tmp/cosign.pass
+        env:
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+
+      - name: Create, push, and sign multi-arch manifest
+        run: |
+          for TAG in latest ${{ github.sha }}; do
+            podman manifest create \
+              ${{ env.REGISTRY }}/${{ env.IMAGE }}:${TAG}
+
+            for ARCH in amd64 arm64; do
+              podman manifest add \
+                ${{ env.REGISTRY }}/${{ env.IMAGE }}:${TAG} \
+                docker://${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ github.sha }}-${ARCH}
+            done
+
+            podman manifest push --all \
+              --format=oci \
+              --sign-by-sigstore-private-key=/tmp/cosign.key \
+              --sign-passphrase-file=/tmp/cosign.pass \
+              ${{ env.REGISTRY }}/${{ env.IMAGE }}:${TAG} \
+              docker://${{ env.REGISTRY }}/${{ env.IMAGE }}:${TAG}
+          done
 
       - name: Clean up signing key
         if: always()
