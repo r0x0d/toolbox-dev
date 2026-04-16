@@ -6,20 +6,20 @@ on:
     branches:
       - main
     paths:
-      - 'Containerfile'
-      - 'ansible/**'
-      - 'hack/**'
-      - 'bin/**'
-      - '.github/workflows/**'
+      - "Containerfile"
+      - "ansible/**"
+      - "hack/**"
+      - "bin/**"
+      - ".github/workflows/**"
   pull_request:
     paths:
-      - 'Containerfile'
-      - 'ansible/**'
-      - 'hack/**'
-      - 'bin/**'
-      - '.github/workflows/**'
+      - "Containerfile"
+      - "ansible/**"
+      - "hack/**"
+      - "bin/**"
+      - ".github/workflows/**"
   schedule:
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * *"
   workflow_dispatch:
 
 env:
@@ -132,24 +132,19 @@ jobs:
           BASE_URL: >-
             https://raw.githubusercontent.com/Red-Hat-Information-Security/Incident-Response/main
         run: |
-          curl -sSL "$BASE_URL/npm-malicious-package-check.py" \
-            -o /tmp/npm-malicious-package-check.py
-          curl -sSL "$BASE_URL/shai-hulud-package-check.py" \
-            -o /tmp/shai-hulud-package-check.py
+          curl -sSL "$BASE_URL/ioc-check.py" \
+            -o /tmp/ioc-check.py
 
       - name: Run malicious package scan
         run: |
           podman run --rm \
-            -v /tmp/npm-malicious-package-check.py:/tmp/npm-malicious-package-check.py:ro \
-            -v /tmp/shai-hulud-package-check.py:/tmp/shai-hulud-package-check.py:ro \
+            -v /tmp/ioc-check.py:/tmp/ioc-check.py:ro \
             localhost/${{ env.IMAGE }}:latest \
             bash -c "
               pip install --quiet requests pyyaml 2>/dev/null || \
                 dnf install -y python3-requests python3-pyyaml 2>/dev/null || true
-              echo '=== Running npm malicious package checker ==='
-              python3 /tmp/npm-malicious-package-check.py
-              echo '=== Running Shai-Hulud package checker ==='
-              python3 /tmp/shai-hulud-package-check.py
+              echo '=== Running IOC checker ==='
+              python3 /tmp/ioc-check.py
             "
 
       - name: Login to registry
