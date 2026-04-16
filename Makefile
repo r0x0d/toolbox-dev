@@ -1,8 +1,13 @@
 default: help
 
 .PHONY: build
-build: ## Build the toolbox image
+build: ## Build the toolbox image for the current architecture
 	podman build --pull --rm -f Containerfile -t local/toolbox-dev .
+
+.PHONY: build-multiarch
+build-multiarch: ## Build multi-arch manifest (amd64 + arm64)
+	podman manifest create local/toolbox-dev
+	podman build --pull --rm -f Containerfile --platform linux/amd64,linux/arm64 --manifest local/toolbox-dev .
 
 .PHONY: test
 test: build ## Build and test with a sample config

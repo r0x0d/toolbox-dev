@@ -32,11 +32,21 @@ permissions:
 
 jobs:
   build:
-    name: Build
+    name: Build (${{ matrix.arch }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [amd64, arm64]
     steps:
       - name: Checkout repo
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
+
+      - name: Set up QEMU
+        if: matrix.arch != 'amd64'
+        uses: docker/setup-qemu-action@49b3bc8e6bdd4a60e6116a5414239cba5943d3cf # v3
+        with:
+          platforms: ${{ matrix.arch }}
 
       - name: Build image
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2
@@ -47,6 +57,7 @@ jobs:
           containerfiles: Containerfile
           layers: true
           oci: true
+          platforms: linux/${{ matrix.arch }}
 
       - name: Test container starts successfully
         run: |
@@ -141,8 +152,41 @@ jobs:
               python3 /tmp/shai-hulud-package-check.py
             "
 
-      - name: Configure sigstore attachments
+      - name: Login to registry
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.BOT_USERNAME }}
+          password: ${{ secrets.BOT_SECRET }}
+
+      - name: Push per-arch image
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: |
+          podman push \
+            --format=oci \
+            --compression-format=zstd:chunked \
+            --compression-level=19 \
+            localhost/${{ env.IMAGE }}:${{ github.sha }} \
+            docker://${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ github.sha }}-${{ matrix.arch }}
+
+  manifest:
+    name: Create and push multi-arch manifest
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v5
+
+      - name: Login to registry
+        uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.BOT_USERNAME }}
+          password: ${{ secrets.BOT_SECRET }}
+
+      - name: Configure sigstore attachments
         run: |
           sudo mkdir -p /etc/containers/registries.d
           sudo tee /etc/containers/registries.d/quay.io-toolbox-dev.yaml > /dev/null <<'EOF'
@@ -152,7 +196,6 @@ jobs:
           EOF
 
       - name: Write signing key
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         run: |
           echo "$COSIGN_PRIVATE_KEY" > /tmp/cosign.key
           echo "$COSIGN_PASSWORD" > /tmp/cosign.pass
@@ -160,30 +203,25 @@ jobs:
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
-      - name: Login to registry
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ secrets.BOT_USERNAME }}
-          password: ${{ secrets.BOT_SECRET }}
+      - name: Create, push, and sign multi-arch manifest
+        run: |
+          for TAG in latest ${{ github.sha }}; do
+            podman manifest create \
+              ${{ env.REGISTRY }}/${{ env.IMAGE }}:${TAG}
 
-      - name: Push and sign image
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # v2
-        id: push
-        with:
-          username: ${{ secrets.BOT_USERNAME }}
-          password: ${{ secrets.BOT_SECRET }}
-          image: ${{ env.IMAGE }}
-          registry: ${{ env.REGISTRY }}
-          tags: latest ${{ github.sha }}
-          extra-args: |
-            --format=oci
-            --compression-format=zstd:chunked
-            --compression-level=19
-            --sign-by-sigstore-private-key=/tmp/cosign.key
-            --sign-passphrase-file=/tmp/cosign.pass
+            for ARCH in amd64 arm64; do
+              podman manifest add \
+                ${{ env.REGISTRY }}/${{ env.IMAGE }}:${TAG} \
+                docker://${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ github.sha }}-${ARCH}
+            done
+
+            podman manifest push --all \
+              --format=oci \
+              --sign-by-sigstore-private-key=/tmp/cosign.key \
+              --sign-passphrase-file=/tmp/cosign.pass \
+              ${{ env.REGISTRY }}/${{ env.IMAGE }}:${TAG} \
+              docker://${{ env.REGISTRY }}/${{ env.IMAGE }}:${TAG}
+          done
 
       - name: Clean up signing key
         if: always()
