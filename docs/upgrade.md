@@ -1,6 +1,7 @@
 # Upgrading
 
-The `tdx-upgrade` command upgrades your toolbox container to the latest published image while preserving your installed packages.
+The `tdx-upgrade` command upgrades your toolbox container to the latest published image
+while preserving your installed packages.
 
 ## Prerequisites
 
