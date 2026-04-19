@@ -6,3 +6,4 @@ python_development_binaries:
   - pre-commit
   - pyright
   - yamllint
+  - uv
