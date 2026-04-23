@@ -7,7 +7,7 @@ base_binaries:
   - make
   - rg
   - strace
-  - vimx
+  - nvim
 
 base_packages:
   - asciinema
@@ -27,4 +27,4 @@ base_packages:
   - strace
   - ksshaskpass
   - git-lfs
-  - vim-X11
+  - nvim

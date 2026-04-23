@@ -70,7 +70,7 @@ tdx-apply --check     # dry run
 The following tools are always available regardless of configuration:
 
 - git, git-lfs
-- neovim
+- nvim
 - jq, ripgrep, fd-find, fzf
 - make, gcc, g++
 - fish, shfmt
