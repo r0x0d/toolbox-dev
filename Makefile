@@ -13,7 +13,7 @@ build-multiarch: ## Build multi-arch manifest (amd64 + arm64)
 test: build ## Build and test with a sample config
 	podman run --rm local/toolbox-dev bash -c \
 		"printf 'languages:\n  python_development: true\n  go_development: true\n' > /tmp/test.yml && \
-		sudo ansible-playbook /usr/share/toolbox-dev/ansible/playbook.yml \
+		sudo ansible-playbook -vvvv /usr/share/toolbox-dev/ansible/playbook.yml \
 			--extra-vars '@/tmp/test.yml'"
 
 .PHONY: docs
