@@ -7,7 +7,7 @@ base_binaries:
   - make
   - rg
   - strace
-  - emacs
+  - nvim
 
 base_packages:
   - asciinema
@@ -27,9 +27,7 @@ base_packages:
   - strace
   - ksshaskpass
   - git-lfs
-  - emacs
+  - neovim
   - shellcheck
   - graphviz
   - cmake
-  # For doom-emacs
-  - gdouros-symbola-fonts
