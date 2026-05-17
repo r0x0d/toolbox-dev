@@ -27,7 +27,7 @@ base_packages:
   - strace
   - ksshaskpass
   - git-lfs
-  - nvim
+  - neovim
   - shellcheck
   - graphviz
   - cmake
