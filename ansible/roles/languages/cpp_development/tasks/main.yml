@@ -8,6 +8,7 @@
       - ctags
       - clangd
       - cmake
+      - clang-devel
     state: present
   when: languages.cpp_development | default(false) | bool
 

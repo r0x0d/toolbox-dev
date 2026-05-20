@@ -2,18 +2,11 @@
 - name: Install rustup and build tools
   ansible.builtin.dnf:
     name:
-      - rustup
-      - cmake
+      - cargo
+      - rust
+      - rust-src
       - clang-devel
     state: present
-  when: languages.rust_development | default(false) | bool
-
-- name: Initialize rustup default toolchain
-  ansible.builtin.command: rustup-init -y
-  args:
-    creates: "{{ tdx_user_home }}/.cargo/bin/rustc"
-  become: false
-  become_user: "{{ tdx_user }}"
   when: languages.rust_development | default(false) | bool
 
 - name: Manage wrapper scripts
