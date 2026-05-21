@@ -1,5 +1,7 @@
 default: help
 
+CONFIG_NAME := all
+
 .PHONY: build
 build: ## Build the toolbox image for the current architecture
 	podman build --pull --rm -f Containerfile -t local/toolbox-dev .
@@ -11,10 +13,11 @@ build-multiarch: ## Build multi-arch manifest (amd64 + arm64)
 
 .PHONY: test
 test: build ## Build and test with a sample config
-	podman run --rm local/toolbox-dev bash -c \
-		"printf 'languages:\n  python_development: true\n  go_development: true\n' > /tmp/test.yml && \
+	cat tests/$(CONFIG_NAME)_config.yaml | \
+	podman run --rm -i local/toolbox-dev bash -c '\
+		cat > /tmp/test.yml && \
 		sudo ansible-playbook -vvvv /usr/share/toolbox-dev/ansible/playbook.yml \
-			--extra-vars '@/tmp/test.yml'"
+			--extra-vars "@/tmp/test.yml"'
 
 .PHONY: docs
 docs: ## Serve documentation locally

@@ -13,6 +13,7 @@
       - rubygem-gem2rpm
       - patch
       - tomcli
+      - mock
       - python3-pip
       - xxd
       - pyproject-rpm-macros

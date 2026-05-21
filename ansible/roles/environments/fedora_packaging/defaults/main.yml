@@ -7,3 +7,4 @@ fedora_packaging_binaries:
   - go2rpm
   - cargo2rpm
   - pyp2spec
+  - mock

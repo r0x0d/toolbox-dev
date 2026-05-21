@@ -1,0 +1,14 @@
+---
+- name: Install Game development tools
+  ansible.builtin.dnf:
+    name:
+      - godot
+    state: present
+  when: environments.game_development | default(false) | bool
+
+- name: Manage wrapper scripts
+  ansible.builtin.include_role:
+    name: internal/bin_wrapper
+  vars:
+    bin_wrapper_binaries: "{{ game_development_binaries }}"
+    bin_wrapper_enabled: "{{ environments.game_development | default(false) | bool }}"

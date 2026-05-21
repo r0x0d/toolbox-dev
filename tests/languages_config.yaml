@@ -1,0 +1,13 @@
+---
+# toolbox-dev configuration
+# Copy to ~/.config/toolbox-dev/config.yml and enable desired roles.
+
+languages:
+  python_development: true
+  nodejs_development: true
+  go_development: true
+  rust_development: true
+  cpp_development: true
+  ruby_development: true
+  dotnet_development: true
+  zig_development: true
