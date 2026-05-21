@@ -6,6 +6,7 @@
       - rust
       - rust-src
       - rust-analyzer
+      - rustup
       - clang-devel
     state: present
   when: languages.rust_development | default(false) | bool
