@@ -5,6 +5,7 @@
       - cargo
       - rust
       - rust-src
+      - rust-analyzer
       - clang-devel
     state: present
   when: languages.rust_development | default(false) | bool
