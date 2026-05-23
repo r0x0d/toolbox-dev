@@ -8,3 +8,8 @@ fedora_packaging_binaries:
   - cargo2rpm
   - pyp2spec
   - mock
+  - fedrq
+  - patch
+  - tomcli
+  - xxd
+  - packit
