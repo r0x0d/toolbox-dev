@@ -8,7 +8,6 @@ base_binaries:
   - rg
   - strace
   - vimx
-  - nvim
 
 base_packages:
   - asciinema
@@ -29,7 +28,6 @@ base_packages:
   - ksshaskpass
   - git-lfs
   - vim-X11
-  - neovim
   - shellcheck
   - graphviz
   - cmake
