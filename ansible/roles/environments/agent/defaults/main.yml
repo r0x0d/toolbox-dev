@@ -1,0 +1,4 @@
+---
+agent_binaries:
+  - goose
+  - opencode
