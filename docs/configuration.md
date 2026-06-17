@@ -31,6 +31,7 @@ languages:
 
 environments:
   fedora_packaging: false
+  agent: false
 
 # Optional: paths to custom Ansible task files
 custom_playbooks:

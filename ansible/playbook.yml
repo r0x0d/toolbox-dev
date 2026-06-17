@@ -66,6 +66,7 @@
     # Environments
     - role: environments/fedora_packaging
     - role: environments/game_development
+    - role: environments/agent
 
   post_tasks:
     - name: Include custom playbooks

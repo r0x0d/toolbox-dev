@@ -20,3 +20,4 @@ Roles are optional Ansible configurations that install language-specific develop
 | Role | Config key | What it installs |
 |------|-----------|-----------------|
 | [Fedora Packaging](fedora-packaging.md) | `environments.fedora_packaging` | fedpkg, packit, COPR, conversion tools |
+| [Agent](agent.md) | `environments.agent` | goose, opencode (via install script) |

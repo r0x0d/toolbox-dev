@@ -1,0 +1,21 @@
+---
+- name: Install Agent tools (goose)
+  ansible.builtin.dnf:
+    name:
+      - goose
+    state: present
+  when: environments.agent | default(false) | bool
+
+- name: Install OpenCode from official script
+  ansible.builtin.shell:
+    cmd: curl -fsSL https://opencode.ai/install | bash
+  args:
+    creates: /usr/local/bin/opencode
+  when: environments.agent | default(false) | bool
+
+- name: Manage wrapper scripts
+  ansible.builtin.include_role:
+    name: internal/bin_wrapper
+  vars:
+    bin_wrapper_binaries: "{{ agent_binaries }}"
+    bin_wrapper_enabled: "{{ environments.agent | default(false) | bool }}"

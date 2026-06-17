@@ -15,6 +15,7 @@ languages:
 environments:
   fedora_packaging: true
   game_developemnt: true
+  agent: true
 
 # Custom playbooks to include (list of paths to task files)
 # Example:
