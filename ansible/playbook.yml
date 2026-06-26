@@ -41,6 +41,14 @@
              default(_container_name.stdout |
              default('toolbox-dev'), true) }}
 
+    - name: Set global bin wrapper enabled flag
+      ansible.builtin.set_fact:
+        tdx_bin_wrapper_enabled: "{{ bin_wrapper | default(true) | bool }}"
+
+    - name: Set global host_runner enabled flag
+      ansible.builtin.set_fact:
+        tdx_host_runner_enabled: "{{ host_runner | default(true) | bool }}"
+
     - name: Ensure user bin directory exists
       ansible.builtin.file:
         path: "{{ tdx_user_bin }}"

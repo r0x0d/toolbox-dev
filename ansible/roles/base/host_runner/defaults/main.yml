@@ -10,3 +10,5 @@ host_runner_binaries:
   - skopeo
   - clamav
   - cosign
+
+host_runner_enabled: "{{ tdx_host_runner_enabled | default(true) | bool }}"

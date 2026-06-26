@@ -4,6 +4,7 @@
     src: host-runner.sh
     dest: /usr/local/bin/host-runner
     mode: "0755"
+  when: tdx_host_runner_enabled | default(true) | bool and host_runner_enabled
 
 - name: Create symlinks for host binaries
   ansible.builtin.file:
@@ -12,3 +13,17 @@
     state: link
     force: true
   loop: "{{ host_runner_binaries }}"
+  when: tdx_host_runner_enabled | default(true) | bool and host_runner_enabled
+
+- name: Remove installed host-runner script
+  ansible.builtin.file:
+    path: /usr/local/bin/host-runner
+    state: absent
+  when: not (tdx_host_runner_enabled | default(true) | bool and host_runner_enabled)
+
+- name: Remove symlinks for host binaries
+  ansible.builtin.file:
+    path: "/usr/local/bin/{{ item }}"
+    state: absent
+  loop: "{{ host_runner_binaries }}"
+  when: not (tdx_host_runner_enabled | default(true) | bool and host_runner_enabled)

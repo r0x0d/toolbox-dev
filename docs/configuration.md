@@ -33,6 +33,10 @@ environments:
   fedora_packaging: false
   agent: false
 
+# Disable all bin wrapper scripts entirely (e.g., in CI or minimal images)
+# When set to false, no wrapper scripts are created or removed
+bin_wrapper: true
+
 # Optional: paths to custom Ansible task files
 custom_playbooks:
   - ~/.config/toolbox-dev/playbooks/my-tools.yml
@@ -90,6 +94,19 @@ For example, enabling `python_development` creates wrappers for `python3`, `pip3
 
 The container name is auto-detected from `/run/.containerenv`.
 You can override it with the `TDX_CONTAINER_NAME` environment variable.
+
+### Disabling bin wrapper scripts entirely
+
+Set `bin_wrapper: false` in your config to disable all wrapper script creation
+and removal across every role. This is useful for CI pipelines or minimal images
+where you only need the packages installed but don't need host-side wrappers.
+
+```yaml
+bin_wrapper: false
+```
+
+When `bin_wrapper` is `false`, the wrapper creation and removal tasks are skipped
+even for roles that have individual wrappers configured.
 
 ## Custom playbooks
 
