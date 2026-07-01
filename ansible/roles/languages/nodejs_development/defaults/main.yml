@@ -1,7 +1,1 @@
 ---
-nodejs_development_binaries:
-  - node
-  - npm
-  - npx
-  - pnpm
-  - yarn

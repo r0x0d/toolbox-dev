@@ -17,8 +17,6 @@ access to all variables set up by toolbox-dev:
 |----------------------|--------------------------------|
 | `tdx_user`           | The real (non-root) user       |
 | `tdx_user_home`      | User's home directory          |
-| `tdx_user_bin`       | `~/.local/bin` path            |
-| `tdx_container_name` | Name of the toolbox container  |
 
 ## Setup
 

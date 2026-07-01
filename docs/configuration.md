@@ -33,10 +33,6 @@ environments:
   fedora_packaging: false
   agent: false
 
-# Disable all bin wrapper scripts entirely (e.g., in CI or minimal images)
-# When set to false, no wrapper scripts are created or removed
-bin_wrapper: true
-
 # Optional: paths to custom Ansible task files
 custom_playbooks:
   - ~/.config/toolbox-dev/playbooks/my-tools.yml
@@ -82,40 +78,9 @@ A profile script (`/etc/profile.d/tdx.sh`) runs on every interactive shell entry
 
 The timestamp is stored at `~/.config/toolbox-dev/.last-applied`.
 
-## Host wrapper scripts
-
-Each role installs wrapper scripts in `~/.local/bin/` for its key binaries.
-These wrappers let you call the tools directly from the host -- if you're
-inside the container, they run the binary directly; if you're on the host,
-they transparently execute it inside the container via `toolbox run`.
-
-For example, enabling `python_development` creates wrappers for `python3`, `pip3`, `ruff`,
-`pre-commit`, `pyright`, and `yamllint`.
-
-The container name is auto-detected from `/run/.containerenv`.
-You can override it with the `TDX_CONTAINER_NAME` environment variable.
-
-### Disabling bin wrapper scripts entirely
-
-Set `bin_wrapper: false` in your config to disable all wrapper script creation
-and removal across every role. This is useful for CI pipelines or minimal images
-where you only need the packages installed but don't need host-side wrappers.
-
-```yaml
-bin_wrapper: false
-```
-
-When `bin_wrapper` is `false`, the wrapper creation and removal tasks are skipped
-even for roles that have individual wrappers configured.
-
 ## Custom playbooks
 
 You can run your own Ansible task files by listing them under `custom_playbooks`
 in your config. See [Custom Playbooks](custom-playbooks.md) for details.
 
-## Disabling a role
-
-Setting a role to `false` and running `tdx-apply` will:
-
-- **Remove the wrapper scripts** from `~/.local/bin/` for that role's binaries
 - **Not uninstall packages** that were previously installed (package removal can break dependencies)

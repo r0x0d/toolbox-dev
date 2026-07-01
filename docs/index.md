@@ -117,24 +117,6 @@ export TDX_CONFIG=~/my-custom-config.yml
 When you enter the container, toolbox-dev automatically detects config changes
 and runs `tdx-apply` for you. No need to remember to apply after editing.
 
-### Host wrapper scripts
-
-Enabled roles install wrapper scripts in `~/.local/bin/` so you can call tools
-directly from the host without entering the container first:
-
-```bash
-# These work from the host -- they transparently run inside the container
-python3 myscript.py
-ruff check .
-cargo build
-```
-
-Override the target container name with:
-
-```bash
-export TDX_CONTAINER_NAME=my-dev
-```
-
 See [Getting Started](getting-started.md) for detailed setup instructions,
 [Configuration](configuration.md) for the full reference, and
 [Custom Playbooks](custom-playbooks.md) to extend toolbox-dev with your own

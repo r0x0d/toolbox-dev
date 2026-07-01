@@ -1,4 +1,10 @@
 ---
+- name: Configure DNF settings
+  ansible.builtin.template:
+    src: dnf.conf.j2
+    dest: /etc/dnf/dnf.conf
+    mode: '0644'
+
 - name: Upgrade all packages
   ansible.builtin.dnf:
     name: "*"
@@ -12,9 +18,3 @@
 - name: Clean dnf cache
   ansible.builtin.command: dnf clean all
   changed_when: false
-
-- name: Manage wrapper scripts
-  ansible.builtin.include_role:
-    name: internal/bin_wrapper
-  vars:
-    bin_wrapper_binaries: "{{ base_binaries }}"

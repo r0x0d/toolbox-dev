@@ -8,13 +8,11 @@ Config key: `environments.agent`
 
 - `goose` — AI agent for development workflows
 
-**OpenCode:**
+**NPM global packages:**
 
-Installed via the official install script from [opencode.ai](https://opencode.ai):
-
-```bash
-curl -fsSL https://opencode.ai/install | bash
-```
+- `opencode-ai` — OpenCode AI coding agent (from [opencode.ai](https://opencode.ai))
+- `@earendil-works/pi-coding-agent` — Pi coding agent
+- `@oh-my-pi/pi-coding-agent` — Oh My Pi coding agent
 
 ## Usage
 
@@ -22,3 +20,8 @@ curl -fsSL https://opencode.ai/install | bash
 environments:
   agent: true
 ```
+
+## Notes
+
+OpenCode, pi and omp are installed via the official npm package rather than the install script,
+which provides better idempotency and removal support through Ansible.

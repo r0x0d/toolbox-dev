@@ -4,10 +4,3 @@
     name: go
     state: present
   when: languages.go_development | default(false) | bool
-
-- name: Manage wrapper scripts
-  ansible.builtin.include_role:
-    name: internal/bin_wrapper
-  vars:
-    bin_wrapper_binaries: "{{ go_development_binaries }}"
-    bin_wrapper_enabled: "{{ languages.go_development | default(false) | bool }}"

@@ -1,9 +1,1 @@
 ---
-python_development_binaries:
-  - python3
-  - pip3
-  - ruff
-  - pre-commit
-  - pyright
-  - yamllint
-  - uv

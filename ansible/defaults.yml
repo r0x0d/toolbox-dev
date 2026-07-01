@@ -14,16 +14,9 @@ languages:
 
 environments:
   fedora_packaging: false
-  game_development: false
 
 # Custom playbooks to include (list of paths to task files)
 # Example:
 #   custom_playbooks:
 #     - ~/.config/toolbox-dev/playbooks/my-setup.yml
 custom_playbooks: []
-
-# Disable bin wrapper scripts entirely (e.g., in CI or minimal images)
-bin_wrapper: true
-
-# Disable host_runner scripts (e.g., in CI or minimal images)
-host_runner: true

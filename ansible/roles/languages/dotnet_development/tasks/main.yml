@@ -7,10 +7,3 @@
       - libicu
     state: present
   when: languages.dotnet_development | default(false) | bool
-
-- name: Manage wrapper scripts
-  ansible.builtin.include_role:
-    name: internal/bin_wrapper
-  vars:
-    bin_wrapper_binaries: "{{ dotnet_development_binaries }}"
-    bin_wrapper_enabled: "{{ languages.dotnet_development | default(false) | bool }}"

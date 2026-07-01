@@ -35,10 +35,3 @@
     name: pyright==1.1.407
     state: present
   when: languages.python_development | default(false) | bool
-
-- name: Manage wrapper scripts
-  ansible.builtin.include_role:
-    name: internal/bin_wrapper
-  vars:
-    bin_wrapper_binaries: "{{ python_development_binaries }}"
-    bin_wrapper_enabled: "{{ languages.python_development | default(false) | bool }}"

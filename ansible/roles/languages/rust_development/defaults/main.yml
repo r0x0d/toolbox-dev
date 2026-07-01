@@ -1,6 +1,1 @@
 ---
-rust_development_binaries:
-  - rustc
-  - cargo
-  - rust-analyzer
-  - rustup

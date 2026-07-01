@@ -18,10 +18,3 @@
     global: true
     state: latest
   when: languages.nodejs_development | default(false) | bool
-
-- name: Manage wrapper scripts
-  ansible.builtin.include_role:
-    name: internal/bin_wrapper
-  vars:
-    bin_wrapper_binaries: "{{ nodejs_development_binaries }}"
-    bin_wrapper_enabled: "{{ languages.nodejs_development | default(false) | bool }}"

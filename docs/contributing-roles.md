@@ -24,25 +24,11 @@ ansible/roles/languages/your_language_development/
 
 Use a descriptive name -- e.g., `python_development`, `fedora_packaging`.
 
-## 2. Define the binaries list
-
-Create `defaults/main.yml` with the list of binaries your role provides.
-These are used to create host wrapper scripts in `~/.local/bin/`:
-
-```yaml
----
-your_language_development_binaries:
-  - your-compiler
-  - your-package-manager
-```
-
-The variable name must match the pattern `<role_name>_binaries`.
 
 ## 3. Write the tasks
 
 The `tasks/main.yml` contains the Ansible tasks. Every task must include
-a `when:` condition so the role can handle both the enabled
-(install + create wrappers) and disabled (remove wrappers) states.
+a `when:` condition so the role can handle both enabled and disabled states.
 
 **Template:**
 
@@ -57,13 +43,6 @@ a `when:` condition so the role can handle both the enabled
   when: languages.your_language_development | default(false) | bool
 
 # ... any post-install tasks with the same when condition ...
-
-- name: Manage wrapper scripts
-  ansible.builtin.include_role:
-    name: internal/bin_wrapper
-  vars:
-    bin_wrapper_binaries: "{{ your_language_development_binaries }}"
-    bin_wrapper_enabled: "{{ languages.your_language_development | default(false) | bool }}"
 ```
 
 ### Tips for writing tasks
@@ -82,7 +61,6 @@ a `when:` condition so the role can handle both the enabled
 - The `community.general` collection is available -- use
   `community.general.npm`, `community.general.gem`, etc. instead of
   raw shell commands when possible
-- The `internal/bin_wrapper` include must always be the last task
 
 ## 4. Register the role in the playbook
 
@@ -123,8 +101,6 @@ Config key: `languages.your_language_development`
 - `your-compiler`
 - `your-package-manager`
 
-**Host wrappers:** `your-compiler`, `your-package-manager`
-
 ## Usage
 
 \```yaml
@@ -163,7 +139,7 @@ EOF
 ## Checklist
 
 - [ ] `defaults/main.yml` with binaries list
-- [ ] `tasks/main.yml` with install tasks, wrapper creation, and wrapper removal
+- [ ] `tasks/main.yml` with install tasks guarded by `when:` condition
 - [ ] All tasks guarded with `when:` condition
 - [ ] Role added to `ansible/playbook.yml` (no `when:` on the role itself)
 - [ ] Config key added to `ansible/defaults.yml`

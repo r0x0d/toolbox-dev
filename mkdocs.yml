@@ -42,6 +42,7 @@ nav:
       - .NET: roles/dotnet.md
       - Zig: roles/zig.md
       - Fedora Packaging: roles/fedora-packaging.md
+      - Agent: roles/agent.md
 
 markdown_extensions:
   - admonition

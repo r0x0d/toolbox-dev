@@ -30,10 +30,3 @@
       - jinja2_time
     state: present
   when: environments.fedora_packaging | default(false) | bool
-
-- name: Manage wrapper scripts
-  ansible.builtin.include_role:
-    name: internal/bin_wrapper
-  vars:
-    bin_wrapper_binaries: "{{ fedora_packaging_binaries }}"
-    bin_wrapper_enabled: "{{ environments.fedora_packaging | default(false) | bool }}"

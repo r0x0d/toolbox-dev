@@ -1,0 +1,11 @@
+[main]
+gpgcheck=True
+clean_requirements_on_remove=True
+best=True
+skip_if_unavailable=False
+# Download as much as possible
+max_parallel_downloads={{ dnf_max_downloads | default(20) }}
+# Let it run! 0 means unlimited number of installs
+installonly_limit=0
+# Pick the closes mirror
+fastestmirror=true

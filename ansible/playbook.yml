@@ -23,43 +23,13 @@
       register: _user_home
       changed_when: false
 
-    - name: Set user paths
+    - name: Set user home directory
       ansible.builtin.set_fact:
         tdx_user_home: "{{ _user_home.stdout }}"
-        tdx_user_bin: "{{ _user_home.stdout }}/.local/bin"
-
-    - name: Read container name from containerenv
-      ansible.builtin.shell: "bash -c 'source /run/.containerenv 2>/dev/null && echo $name'"
-      register: _container_name
-      changed_when: false
-      ignore_errors: true
-
-    - name: Set container name
-      ansible.builtin.set_fact:
-        tdx_container_name: >-
-          {{ lookup('env', 'TDX_CONTAINER_NAME') |
-             default(_container_name.stdout |
-             default('toolbox-dev'), true) }}
-
-    - name: Set global bin wrapper enabled flag
-      ansible.builtin.set_fact:
-        tdx_bin_wrapper_enabled: "{{ bin_wrapper | default(true) | bool }}"
-
-    - name: Set global host_runner enabled flag
-      ansible.builtin.set_fact:
-        tdx_host_runner_enabled: "{{ host_runner | default(true) | bool }}"
-
-    - name: Ensure user bin directory exists
-      ansible.builtin.file:
-        path: "{{ tdx_user_bin }}"
-        state: directory
-        owner: "{{ tdx_user }}"
-        mode: "0755"
 
   roles:
     # Base (always run)
     - role: base/packages
-    - role: base/host_runner
 
     # Languages
     - role: languages/python_development
@@ -73,7 +43,6 @@
 
     # Environments
     - role: environments/fedora_packaging
-    - role: environments/game_development
     - role: environments/agent
 
   post_tasks:

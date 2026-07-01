@@ -4,10 +4,3 @@
     name: zig
     state: present
   when: languages.zig_development | default(false) | bool
-
-- name: Manage wrapper scripts
-  ansible.builtin.include_role:
-    name: internal/bin_wrapper
-  vars:
-    bin_wrapper_binaries: "{{ zig_development_binaries }}"
-    bin_wrapper_enabled: "{{ languages.zig_development | default(false) | bool }}"

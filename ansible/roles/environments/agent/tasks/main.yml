@@ -6,16 +6,23 @@
     state: present
   when: environments.agent | default(false) | bool
 
-- name: Install OpenCode from official script
-  ansible.builtin.shell:
-    cmd: curl -fsSL https://opencode.ai/install | bash
-  args:
-    creates: /usr/local/bin/opencode
+- name: Install OpenCode
+  community.general.npm:
+    name: opencode-ai
+    state: present
+    global: true
   when: environments.agent | default(false) | bool
 
-- name: Manage wrapper scripts
-  ansible.builtin.include_role:
-    name: internal/bin_wrapper
-  vars:
-    bin_wrapper_binaries: "{{ agent_binaries }}"
-    bin_wrapper_enabled: "{{ environments.agent | default(false) | bool }}"
+- name: Install pi
+  community.general.npm:
+    name: "@earendil-works/pi-coding-agent"
+    state: present
+    global: true
+  when: environments.agent | default(false) | bool
+
+- name: Install omp
+  community.general.npm:
+    name: "@oh-my-pi/pi-coding-agent"
+    state: present
+    global: true
+  when: environments.agent | default(false) | bool

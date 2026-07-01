@@ -20,10 +20,3 @@
     - {name: ruby-lsp-rubyfmt, version: "0.1.0"}
     - {name: ruby-lsp-rake, version: "0.3.6"}
   when: languages.ruby_development | default(false) | bool
-
-- name: Manage wrapper scripts
-  ansible.builtin.include_role:
-    name: internal/bin_wrapper
-  vars:
-    bin_wrapper_binaries: "{{ ruby_development_binaries }}"
-    bin_wrapper_enabled: "{{ languages.ruby_development | default(false) | bool }}"

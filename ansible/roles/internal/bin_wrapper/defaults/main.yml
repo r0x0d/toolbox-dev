@@ -1,3 +1,0 @@
----
-bin_wrapper_binaries: []
-bin_wrapper_enabled: "{{ tdx_bin_wrapper_enabled | default(true) | bool }}"

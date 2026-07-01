@@ -11,10 +11,3 @@
       - clang-devel
     state: present
   when: languages.cpp_development | default(false) | bool
-
-- name: Manage wrapper scripts
-  ansible.builtin.include_role:
-    name: internal/bin_wrapper
-  vars:
-    bin_wrapper_binaries: "{{ cpp_development_binaries }}"
-    bin_wrapper_enabled: "{{ languages.cpp_development | default(false) | bool }}"
