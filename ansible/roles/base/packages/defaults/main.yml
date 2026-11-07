@@ -4,7 +4,6 @@ base_packages:
   - fd-find
   - task
   - fish
-  - shfmt
   - fzf
   - git-credential-libsecret
   - jq
