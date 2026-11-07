@@ -3,8 +3,7 @@ FROM registry.fedoraproject.org/fedora-toolbox:45
 ENV HOME /root
 ENV container container
 
-RUN sed -i "s/enabled=1/enabled=0/" "/etc/yum.repos.d/fedora-cisco-openh264.repo" \
-    && echo "fastestmirror=true" >> /etc/dnf/dnf.conf \
+RUN echo "fastestmirror=true" >> /etc/dnf/dnf.conf \
     && echo "max_parallel_downloads=20" >> /etc/dnf/dnf.conf
 
 COPY ansible/ /usr/share/toolbox-dev/ansible/
