@@ -1,4 +1,4 @@
-FROM registry.fedoraproject.org/fedora-toolbox:44
+FROM registry.fedoraproject.org/fedora-toolbox:45
 
 ENV HOME /root
 ENV container container
