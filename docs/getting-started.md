@@ -36,6 +36,7 @@ languages:
   cpp_development: false
   ruby_development: false
   dotnet_development: false
+  java_development: false
   zig_development: false
 
 environments:

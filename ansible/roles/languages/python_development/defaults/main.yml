@@ -1,1 +1,11 @@
 ---
+# Additional Python interpreters installed alongside the Fedora default
+# python3 (each with its -devel headers). Override in your config.yml,
+# e.g. `python_extra_versions: ["3.11", "3.12"]`, or `[]` to skip.
+python_extra_versions:
+  - "3.9"
+  - "3.10"
+  - "3.11"
+  - "3.12"
+  - "3.13"
+  - "3.14"

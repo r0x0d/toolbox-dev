@@ -1,0 +1,13 @@
+---
+# Node.js runtime, npm and headers. Unguarded on purpose: callers decide when
+# to run it. Other roles that need npm reuse this via:
+#   ansible.builtin.include_role:
+#     name: languages/nodejs_development
+#     tasks_from: runtime
+- name: Install Node.js
+  ansible.builtin.dnf:
+    name:
+      - nodejs
+      - nodejs-npm
+      - nodejs-devel
+    state: present

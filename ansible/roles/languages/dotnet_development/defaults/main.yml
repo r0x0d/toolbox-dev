@@ -1,1 +1,10 @@
 ---
+# Older .NET SDK channels (not packaged in Fedora) installed side by side
+# with the Fedora dotnet-sdk-10.0 using Microsoft's dotnet-install.sh.
+# Override in your config.yml, e.g. `dotnet_extra_channels: ["8.0"]`, or `[]`.
+dotnet_extra_channels:
+  - "8.0"
+  - "9.0"
+
+# Must match where Fedora's dotnet package lives so one `dotnet` sees all SDKs.
+dotnet_root: /usr/lib64/dotnet

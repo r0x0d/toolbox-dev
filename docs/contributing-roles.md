@@ -24,7 +24,6 @@ ansible/roles/languages/your_language_development/
 
 Use a descriptive name -- e.g., `python_development`, `fedora_packaging`.
 
-
 ## 3. Write the tasks
 
 The `tasks/main.yml` contains the Ansible tasks. Every task must include
@@ -61,6 +60,26 @@ a `when:` condition so the role can handle both enabled and disabled states.
 - The `community.general` collection is available -- use
   `community.general.npm`, `community.general.gem`, etc. instead of
   raw shell commands when possible
+
+### Depending on another role
+
+If your role needs something another role installs (e.g. npm), don't
+duplicate the task. Put the shared tasks in their own file in the providing
+role -- without a `when:`, so callers decide -- and include just that file:
+
+```yaml
+# ansible/roles/languages/nodejs_development/tasks/runtime.yml holds the
+# shared "Install Node.js" task; main.yml includes it behind its own toggle.
+
+- name: Install Node.js (dependency)
+  ansible.builtin.include_role:
+    name: languages/nodejs_development
+    tasks_from: runtime
+  when: environments.your_environment | default(false) | bool
+```
+
+Avoid `meta/main.yml` dependencies here: they pull in the whole role, whose
+tasks are still skipped unless the user enabled that role's toggle.
 
 ## 4. Register the role in the playbook
 

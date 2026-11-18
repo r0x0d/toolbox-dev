@@ -19,13 +19,14 @@ roles that you enable or disable via a simple YAML config file.
 
 | Role | Config key | Description |
 | ---- | ---------- | ----------- |
-| [Python](roles/python.md) | `languages.python_development` | Python 3, pip, ruff, pre-commit, pyright, pyenv dependencies |
-| [Node.js](roles/node.md) | `languages.nodejs_development` | Node.js, pnpm, yarn |
+| [Python](roles/python.md) | `languages.python_development` | Python 3 + extra interpreters, pip, uv, poetry, pipx, tox, ruff, pyright |
+| [Node.js](roles/node.md) | `languages.nodejs_development` | Node.js (+ extra majors), pnpm, yarn |
 | [Go](roles/go.md) | `languages.go_development` | Go compiler |
 | [Rust](roles/rust.md) | `languages.rust_development` | Rust via rustup, cmake, clang |
 | [C++](roles/cpp.md) | `languages.cpp_development` | GCC, G++, clangd, cmake, ctags |
 | [Ruby](roles/ruby.md) | `languages.ruby_development` | Ruby, RVM, ruby-lsp and plugins |
-| [.NET](roles/dotnet.md) | `languages.dotnet_development` | .NET 10.0 SDK and runtime |
+| [.NET](roles/dotnet.md) | `languages.dotnet_development` | .NET 10.0 SDK + 8.0/9.0 SDKs |
+| [Java](roles/java.md) | `languages.java_development` | Temurin JDK 8/11/17/21/25, Maven, Ant, Gradle |
 | [Zig](roles/zig.md) | `languages.zig_development` | Zig compiler |
 
 ### Environments
@@ -33,6 +34,7 @@ roles that you enable or disable via a simple YAML config file.
 | Role | Config key | Description |
 | ---- | ---------- | ----------- |
 | [Fedora Packaging](roles/fedora-packaging.md) | `environments.fedora_packaging` | fedpkg, packit, COPR, conversion tools |
+| [Agent](roles/agent.md) | `environments.agent` | Claude Code, goose, OpenCode, pi, omp |
 
 ## Quick start
 

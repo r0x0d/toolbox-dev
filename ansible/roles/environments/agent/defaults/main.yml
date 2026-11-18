@@ -1,1 +1,5 @@
 ---
+# Claude Code is installed as a global npm package by root, so its built-in
+# auto-updater can't write to it. Update with `sudo npm update -g
+# @anthropic-ai/claude-code` (or by re-applying after bumping state).
+agent_claude_disable_autoupdater: true

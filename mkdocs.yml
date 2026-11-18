@@ -40,6 +40,7 @@ nav:
       - C++: roles/cpp.md
       - Ruby: roles/ruby.md
       - .NET: roles/dotnet.md
+      - Java: roles/java.md
       - Zig: roles/zig.md
       - Fedora Packaging: roles/fedora-packaging.md
       - Agent: roles/agent.md

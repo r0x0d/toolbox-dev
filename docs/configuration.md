@@ -27,6 +27,7 @@ languages:
   cpp_development: false
   ruby_development: false
   dotnet_development: false
+  java_development: false
   zig_development: false
 
 environments:
@@ -39,6 +40,21 @@ custom_playbooks:
 ```
 
 Set a role to `true` to enable it, `false` to disable it.
+
+## Role tunables
+
+Some roles expose variables (defined in each role's `defaults/main.yml`) that you
+can override at the top level of your config:
+
+```yaml
+python_extra_versions: ["3.11", "3.12"]   # Python role
+nodejs_extra_versions: [24]               # Node.js role
+dotnet_extra_channels: ["8.0"]            # .NET role
+java_versions: [17, 21]                   # Java role
+java_default_version: 17                  # Java role
+```
+
+See each role's page for the full list.
 
 ## CLI tools
 

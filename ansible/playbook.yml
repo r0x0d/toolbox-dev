@@ -39,6 +39,7 @@
     - role: languages/cpp_development
     - role: languages/ruby_development
     - role: languages/dotnet_development
+    - role: languages/java_development
     - role: languages/zig_development
 
     # Environments

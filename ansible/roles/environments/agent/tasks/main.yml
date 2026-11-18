@@ -1,4 +1,10 @@
 ---
+- name: Install Node.js (dependency for npm-based agents)
+  ansible.builtin.include_role:
+    name: languages/nodejs_development
+    tasks_from: runtime
+  when: environments.agent | default(false) | bool
+
 - name: Install Agent tools (goose)
   ansible.builtin.dnf:
     name:
@@ -26,3 +32,21 @@
     state: present
     global: true
   when: environments.agent | default(false) | bool
+
+- name: Install Claude Code
+  community.general.npm:
+    name: "@anthropic-ai/claude-code"
+    state: present
+    global: true
+  when: environments.agent | default(false) | bool
+
+- name: Disable Claude Code auto-updater (root-owned global install)
+  ansible.builtin.copy:
+    dest: /etc/profile.d/tdx-agent.sh
+    content: |
+      # Managed by toolbox-dev (environments.agent).
+      export DISABLE_AUTOUPDATER=1
+    mode: '0644'
+  when:
+    - environments.agent | default(false) | bool
+    - agent_claude_disable_autoupdater | bool

@@ -10,10 +10,19 @@ languages:
   cpp_development: false
   ruby_development: false
   dotnet_development: false
+  java_development: false
   zig_development: false
 
 environments:
   fedora_packaging: false
+  agent: false
+
+# Roles expose tunables you can override here, e.g.:
+#   python_extra_versions: ["3.11", "3.12"]
+#   nodejs_extra_versions: [24]
+#   dotnet_extra_channels: ["8.0"]
+#   java_versions: [17, 21]
+#   java_default_version: 17
 
 # Custom playbooks to include (list of paths to task files)
 # Example:
