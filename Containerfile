@@ -11,7 +11,6 @@ COPY ansible/defaults.yml /usr/share/toolbox-dev/defaults.yml
 
 COPY bin/tdx-apply /usr/local/bin/tdx-apply
 COPY bin/tdx-edit /usr/local/bin/tdx-edit
-COPY bin/tdx-upgrade /usr/local/bin/tdx-upgrade
 
 COPY hack/profile.d/tdx.sh /etc/profile.d/tdx.sh
 
@@ -19,7 +18,7 @@ RUN dnf install -y --nodocs ansible-core jq podman-remote python3-pip systemd \
     && dnf clean all
 
 # Workaround for apple container. See https://github.com/apple/container/issues/1669
-RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == \
+RUN (for i in /lib/systemd/system/sysinit.target.wants/*; do [ $i == \
 systemd-tmpfiles-setup.service ] || rm -f $i; done); \
 rm -f /lib/systemd/system/multi-user.target.wants/*;\
 rm -f /etc/systemd/system/*.wants/*;\

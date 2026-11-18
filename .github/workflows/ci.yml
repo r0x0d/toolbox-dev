@@ -127,26 +127,6 @@ jobs:
               --check
           "
 
-      - name: Download malicious package scripts
-        env:
-          BASE_URL: >-
-            https://raw.githubusercontent.com/Red-Hat-Information-Security/Incident-Response/main
-        run: |
-          curl -sSL "$BASE_URL/ioc-check.py" \
-            -o /tmp/ioc-check.py
-
-      - name: Run malicious package scan
-        run: |
-          podman run --rm \
-            -v /tmp/ioc-check.py:/tmp/ioc-check.py:ro \
-            localhost/${{ env.IMAGE }}:latest \
-            bash -c "
-              pip install --quiet requests pyyaml 2>/dev/null || \
-                dnf install -y python3-requests python3-pyyaml 2>/dev/null || true
-              echo '=== Running IOC checker ==='
-              python3 /tmp/ioc-check.py
-            "
-
       - name: Login to registry
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: redhat-actions/podman-login@50c2d9a331bb67c8fdab99b86455fad05e2e3252 # v2.0

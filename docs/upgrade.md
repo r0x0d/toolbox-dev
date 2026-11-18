@@ -1,49 +1,49 @@
 # Upgrading
 
-The `tdx-upgrade` command upgrades your toolbox container to the latest published image
-while preserving your installed packages.
+To upgrade, pull the latest image and re-create your container. Your
+config (`~/.config/toolbox-dev/config.yml`) lives outside the container,
+so it is kept. Packages installed by roles are **not** kept: run
+`tdx-apply` in the new container to re-install them.
 
-## Prerequisites
+!!! note
+    Auto-apply only runs when the config is newer than the last apply,
+    so it will **not** trigger on its own after re-creating the container.
+    Run `tdx-apply` manually, as shown below.
 
-Enable the Podman socket on your host:
+## Linux (Toolbox)
+
+Run these on the host, not inside the toolbox:
 
 ```bash
-systemctl --user enable --now podman.socket
+podman pull quay.io/toolbox-dev/toolbox-dev:latest
+toolbox rm --force dev
+toolbox create --image quay.io/toolbox-dev/toolbox-dev:latest dev
+toolbox enter dev
 ```
 
-## Usage
-
-From inside the toolbox:
-
-```bash
-tdx-upgrade
-```
-
-## What it does
-
-1. **Checks for updates** by comparing the local image digest against the remote registry
-2. **Pulls the latest image** if an update is available
-3. **Captures your installed RPMs** so user-installed packages can be restored
-4. **Renames the current container** with a timestamp suffix (e.g., `dev_2026-03-26-143000`) as a backup
-5. **Creates a new container** from the latest image using the original name
-6. **Re-installs your RPMs** in the new container (with `--skip-broken --skip-unavailable` for safety)
-7. **Enters the new container**
-
-## After upgrading
-
-After the upgrade, run `tdx-apply` to re-apply your Ansible configuration:
+Then, inside the new toolbox:
 
 ```bash
 tdx-apply
 ```
 
-The config file and timestamp persist in your home directory, so auto-apply will trigger on first entry if the config exists.
+To keep the old container as a fallback, create the new one under a
+different name first (e.g. `dev-new`) and remove the old one once you're
+happy with it.
 
-## Rollback
+## macOS (apple/container)
 
-If something goes wrong, your old container still exists with the timestamped name:
+Run these on the Mac:
 
 ```bash
-toolbox list                              # find the backup name
-toolbox enter dev_2026-03-26-143000       # enter the old container
+container image pull quay.io/toolbox-dev/toolbox-dev:latest
+container machine delete dev
+container machine create --name dev --cpus 4 --memory 8G \
+  quay.io/toolbox-dev/toolbox-dev:latest
+container machine run -n dev -- tdx-apply
 ```
+
+Use the same `container machine create` options you originally created it
+with (see [macOS](macos.md)). If it was your default machine, add
+`--set-default` again. To keep the old machine as a fallback, create the new
+one under a different name instead of deleting `dev` first.

@@ -27,6 +27,7 @@ theme:
 nav:
   - Home: index.md
   - Getting Started: getting-started.md
+  - macOS (apple/container): macos.md
   - Configuration: configuration.md
   - Upgrading: upgrade.md
   - Custom Playbooks: custom-playbooks.md

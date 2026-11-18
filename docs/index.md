@@ -112,7 +112,6 @@ export TDX_CONFIG=~/my-custom-config.yml
 | `tdx-apply` | Apply the current configuration |
 | `tdx-apply -v` | Apply with verbose Ansible output |
 | `tdx-apply --check` | Dry run -- show what would change without applying |
-| `tdx-upgrade` | Upgrade the container to the latest image |
 
 ### Auto-apply on entry
 

@@ -5,6 +5,8 @@
 - [Podman](https://podman.io/) installed on your host
 - [Toolbox](https://containertoolbx.org/) installed (`sudo dnf install toolbox` on Fedora)
 
+On macOS, use Apple's `container` CLI instead -- see [macOS (apple/container)](macos.md).
+
 ## Create a toolbox
 
 ```bash
