@@ -80,9 +80,10 @@ tdx-edit
 
 Creates the config from defaults if it doesn't exist yet.
 
-### tdx-upgrade
+### Upgrading
 
-Upgrades the toolbox container to the latest image. See [Upgrading](upgrade.md).
+There is no upgrade command: pull the latest image and re-create the
+container. See [Upgrading](upgrade.md).
 
 ## Auto-apply behavior
 

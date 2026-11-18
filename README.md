@@ -18,6 +18,9 @@ tdx-edit
 tdx-apply
 ```
 
+On macOS, run it with [apple/container](https://github.com/apple/container) --
+see the [macOS docs](docs/macos.md).
+
 ## Available roles
 
 | Role | Config key | Description |
@@ -38,7 +41,8 @@ tdx-apply
 
 - `tdx-apply` -- apply your configuration (runs Ansible)
 - `tdx-edit` -- open config in your `$EDITOR`
-- `tdx-upgrade` -- upgrade to the latest container image
+
+To upgrade, pull the latest image and re-create the container -- see the [upgrade docs](docs/upgrade.md).
 
 ## Building locally
 

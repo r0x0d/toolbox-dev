@@ -51,7 +51,7 @@ jobs:
         uses: ludeeus/action-shellcheck@2.0.0
         with:
           scandir: .
-          additional_files: bin/tdx-apply bin/tdx-edit bin/tdx-upgrade
+          additional_files: bin/tdx-apply bin/tdx-edit
 
   hadolint:
     name: Hadolint
