@@ -18,8 +18,8 @@ RUN dnf install -y --nodocs ansible-core jq podman-remote python3-pip systemd \
     && dnf clean all
 
 # Workaround for apple container. See https://github.com/apple/container/issues/1669
-RUN (for i in /lib/systemd/system/sysinit.target.wants/*; do [ $i == \
-systemd-tmpfiles-setup.service ] || rm -f $i; done); \
+RUN for i in /lib/systemd/system/sysinit.target.wants/*; do \
+    [ "$(basename "$i")" = systemd-tmpfiles-setup.service ] || rm -f "$i"; done; \
 rm -f /lib/systemd/system/multi-user.target.wants/*;\
 rm -f /etc/systemd/system/*.wants/*;\
 rm -f /lib/systemd/system/local-fs.target.wants/*; \
