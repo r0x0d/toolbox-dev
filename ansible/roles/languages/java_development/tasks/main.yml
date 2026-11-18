@@ -1,0 +1,39 @@
+---
+- name: Add Eclipse Adoptium repository
+  ansible.builtin.yum_repository:
+    name: adoptium
+    description: Eclipse Adoptium
+    baseurl: "https://packages.adoptium.net/artifactory/rpm/fedora/$releasever/$basearch"
+    gpgcheck: true
+    gpgkey: https://packages.adoptium.net/artifactory/api/gpg/key/public
+    enabled: true
+  when: languages.java_development | default(false) | bool
+
+- name: Install Temurin JDKs and build tools
+  ansible.builtin.dnf:
+    name: "{{ java_versions | map('regex_replace', '^(.*)$', 'temurin-\\1-jdk') | list + ['maven', 'ant', 'unzip'] }}"
+    state: present
+  when: languages.java_development | default(false) | bool
+
+- name: Download and extract Gradle
+  ansible.builtin.unarchive:
+    src: "https://services.gradle.org/distributions/gradle-{{ java_gradle_version }}-bin.zip"
+    dest: /opt
+    remote_src: true
+    creates: "/opt/gradle-{{ java_gradle_version }}/bin/gradle"
+  when: languages.java_development | default(false) | bool
+
+- name: Link gradle into PATH
+  ansible.builtin.file:
+    src: "/opt/gradle-{{ java_gradle_version }}/bin/gradle"
+    dest: /usr/local/bin/gradle
+    state: link
+    force: true
+  when: languages.java_development | default(false) | bool
+
+- name: Install use-java shell helper
+  ansible.builtin.template:
+    src: tdx-java.sh.j2
+    dest: /etc/profile.d/tdx-java.sh
+    mode: '0644'
+  when: languages.java_development | default(false) | bool

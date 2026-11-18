@@ -35,3 +35,22 @@
     name: pyright==1.1.407
     state: present
   when: languages.python_development | default(false) | bool
+
+- name: Install Python project tooling
+  ansible.builtin.dnf:
+    name:
+      - pipx
+      - poetry
+      - tox
+      - python3-virtualenv
+    state: present
+  when: languages.python_development | default(false) | bool
+
+- name: Install additional Python interpreters
+  ansible.builtin.dnf:
+    name: "{{ python_extra_versions | map('regex_replace', '^(.*)$', 'python\\1') | list
+             + python_extra_versions | map('regex_replace', '^(.*)$', 'python\\1-devel') | list }}"
+    state: present
+  when:
+    - languages.python_development | default(false) | bool
+    - python_extra_versions | length > 0

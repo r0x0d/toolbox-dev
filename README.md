@@ -22,15 +22,17 @@ tdx-apply
 
 | Role | Config key | Description |
 |------|-----------|-------------|
-| Python | `languages.python_development` | Python 3, pip, ruff, pre-commit, pyright |
-| Node.js | `languages.nodejs_development` | Node.js, pnpm, yarn |
+| Python | `languages.python_development` | Python 3 + extra interpreters, pip, uv, poetry, pipx, tox, ruff, pyright |
+| Node.js | `languages.nodejs_development` | Node.js (+ extra majors), pnpm, yarn |
 | Go | `languages.go_development` | Go compiler |
 | Rust | `languages.rust_development` | Rust via rustup, cmake, clang |
 | C++ | `languages.cpp_development` | GCC, G++, clangd, cmake, ctags |
 | Ruby | `languages.ruby_development` | Ruby, RVM, ruby-lsp |
-| .NET | `languages.dotnet_development` | .NET 10.0 SDK and runtime |
+| .NET | `languages.dotnet_development` | .NET 10.0 SDK + 8.0/9.0 SDKs |
+| Java | `languages.java_development` | Temurin JDK 8/11/17/21/25, Maven, Ant, Gradle |
 | Zig | `languages.zig_development` | Zig compiler |
 | Fedora Packaging | `environments.fedora_packaging` | fedpkg, packit, COPR tools |
+| Agent | `environments.agent` | Claude Code, goose, OpenCode, pi, omp |
 
 ## CLI tools
 

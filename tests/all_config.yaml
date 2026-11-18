@@ -10,6 +10,7 @@ languages:
   cpp_development: true
   ruby_development: true
   dotnet_development: true
+  java_development: true
   zig_development: true
 
 environments:

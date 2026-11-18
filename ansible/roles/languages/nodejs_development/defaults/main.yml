@@ -1,1 +1,7 @@
 ---
+# Additional Node.js majors installed alongside the Fedora default nodejs.
+# Fedora installs them as versioned binaries (node-24, npm-24, ...).
+# Override in your config.yml, e.g. `nodejs_extra_versions: [26]`, or `[]`.
+nodejs_extra_versions:
+  - 24
+  - 26

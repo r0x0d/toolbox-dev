@@ -7,3 +7,36 @@
       - libicu
     state: present
   when: languages.dotnet_development | default(false) | bool
+
+- name: List installed .NET SDKs
+  ansible.builtin.command: dotnet --list-sdks
+  register: _dotnet_sdks
+  changed_when: false
+  when:
+    - languages.dotnet_development | default(false) | bool
+    - dotnet_extra_channels | length > 0
+
+- name: Download dotnet-install.sh
+  ansible.builtin.get_url:
+    url: https://dot.net/v1/dotnet-install.sh
+    dest: /usr/local/libexec/dotnet-install.sh
+    mode: '0755'
+  when:
+    - languages.dotnet_development | default(false) | bool
+    - dotnet_extra_channels | length > 0
+
+- name: Install additional .NET SDK channels
+  ansible.builtin.command:
+    argv:
+      - /usr/local/libexec/dotnet-install.sh
+      - --channel
+      - "{{ item }}"
+      - --install-dir
+      - "{{ dotnet_root }}"
+      - --no-path
+  loop: "{{ dotnet_extra_channels }}"
+  changed_when: true
+  when:
+    - languages.dotnet_development | default(false) | bool
+    - dotnet_extra_channels | length > 0
+    - _dotnet_sdks.stdout_lines | select('match', '^' ~ (item | regex_escape) ~ '[.]') | list | length == 0

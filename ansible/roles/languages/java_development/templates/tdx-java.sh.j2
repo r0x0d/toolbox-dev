@@ -1,0 +1,25 @@
+# shellcheck shell=bash
+# Managed by toolbox-dev (languages.java_development).
+
+# use-java <version>: switch the Temurin JDK for the current shell
+use-java() {
+    local v="$1" home
+    if [ -z "$v" ]; then
+        echo "usage: use-java <version>   installed:" >&2
+        ls -1d /usr/lib/jvm/temurin-*-jdk* >&2 2>/dev/null
+        return 1
+    fi
+    home=$(ls -1d /usr/lib/jvm/temurin-"$v"-jdk* 2>/dev/null | head -n1)
+    if [ -z "$home" ] || [ ! -x "$home/bin/java" ]; then
+        echo "JDK '$v' not found" >&2
+        return 1
+    fi
+    export JAVA_HOME="$home"
+    PATH=$(printf '%s' "$PATH" | sed -E 's#/usr/lib/jvm/[^:]+/bin:?##g')
+    export PATH="$JAVA_HOME/bin:$PATH"
+    java -version 2>&1 | head -n1
+}
+
+if [ -z "${JAVA_HOME:-}" ]; then
+    use-java {{ java_default_version }} >/dev/null 2>&1 || true
+fi

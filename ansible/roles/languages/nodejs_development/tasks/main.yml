@@ -1,20 +1,23 @@
 ---
-- name: Install Node.js
+- name: Install Node.js runtime
+  ansible.builtin.include_tasks: runtime.yml
+  when: languages.nodejs_development | default(false) | bool
+
+- name: Install package managers
+  community.general.npm:
+    name: "{{ item }}"
+    global: true
+    state: latest
+  loop:
+    - pnpm
+    - yarn
+  when: languages.nodejs_development | default(false) | bool
+
+- name: Install additional Node.js versions
   ansible.builtin.dnf:
-    name: nodejs
+    name: "{{ nodejs_extra_versions | map('regex_replace', '^(.*)$', 'nodejs\\1') | list
+             + nodejs_extra_versions | map('regex_replace', '^(.*)$', 'nodejs\\1-npm') | list }}"
     state: present
-  when: languages.nodejs_development | default(false) | bool
-
-- name: Install pnpm
-  community.general.npm:
-    name: pnpm
-    global: true
-    state: latest
-  when: languages.nodejs_development | default(false) | bool
-
-- name: Install yarn
-  community.general.npm:
-    name: yarn
-    global: true
-    state: latest
-  when: languages.nodejs_development | default(false) | bool
+  when:
+    - languages.nodejs_development | default(false) | bool
+    - nodejs_extra_versions | length > 0
